@@ -1,0 +1,471 @@
+{
+  "bootstrap": {
+    "json_path": "docs/bootstrap/environment.json",
+    "markdown_path": "docs/bootstrap/environment.md",
+    "max_age_hours": 168,
+    "required_before_preflight": true
+  },
+  "delivery": {
+    "final_artifact_paths": [
+      "tasks/feature_list.json",
+      "tasks/run_state.json",
+      "docs/run-reports/{run_id}.md",
+      "docs/session-reports/{run_id}/**",
+      "docs/pull-requests/{run_id}.md",
+      "docs/pull-requests/{run_id}.json",
+      "docs/learning/{run_id}.md",
+      "docs/learning/{run_id}-teach-me-checklist.md",
+      "docs/teach-me-reports/{run_id}/**",
+      "docs/bootstrap/environment.json",
+      "docs/bootstrap/environment.md"
+    ],
+    "task_evidence_paths": [
+      "tasks/feature_list.json",
+      "tasks/run_state.json",
+      "docs/learning/{run_id}.md",
+      "docs/implementation-results/{task_id}*.json",
+      "docs/reviews/{task_id}/**",
+      "docs/validation-results/{task_id}*.json"
+    ]
+  },
+  "domain_review": {
+    "default_required": false,
+    "enabled": true,
+    "required_when_risk_at_least": "medium"
+  },
+  "enforcement": {
+    "evidence_ledger_required": true,
+    "model_ack_required_for_critical_tasks": true,
+    "orchestrator_lock_required": true,
+    "schema_validation_required": true,
+    "scope_guard_required": true,
+    "secret_scan_required": true,
+    "state_machine_enforced": true
+  },
+  "evidence": {
+    "ledger_path": "docs/evidence/{run_id}/evidence-ledger.json",
+    "require_task_evidence_before_validation": true
+  },
+  "gates": {
+    "baseline": [
+      {
+        "command": "python -B scripts/bootstrap_environment.py --check",
+        "id": "bootstrap-freshness",
+        "required": true,
+        "timeout_seconds": 60
+      },
+      {
+        "command": "python -B scripts/validate_harness.py .",
+        "id": "harness-validate",
+        "required": true,
+        "timeout_seconds": 120
+      },
+      {
+        "command": "python -B scripts/check_python_syntax.py scripts src tests harness_tests",
+        "id": "python-syntax",
+        "required": true,
+        "timeout_seconds": 120
+      },
+      {
+        "command": "python -B -m unittest discover -s harness_tests -q",
+        "id": "unit-tests",
+        "required": true,
+        "timeout_seconds": 180
+      }
+    ],
+    "post_implementation": [
+      {
+        "command": "python -B scripts/check_python_syntax.py scripts src tests harness_tests",
+        "id": "python-syntax",
+        "required": true,
+        "timeout_seconds": 120
+      },
+      {
+        "command": "python -B -m pytest -q -p no:cacheprovider",
+        "id": "project-tests",
+        "required": false,
+        "timeout_seconds": 300,
+        "when_all_paths_exist": [
+          "tests"
+        ]
+      },
+      {
+        "command": "python -B -m unittest discover -s tests -q",
+        "id": "unittest-project",
+        "required": false,
+        "timeout_seconds": 300,
+        "when_all_paths_exist": [
+          "tests"
+        ]
+      }
+    ]
+  },
+  "model_routing": {
+    "action_bindings": {
+      "BLOCKED": "orchestration_large",
+      "COMMIT_TASK": "execution_fast",
+      "COMPLETE": "execution_fast",
+      "FINALIZE_SESSION": "execution_fast",
+      "IMPLEMENT_TASK": "execution_medium",
+      "REPAIR_TASK": "execution_medium",
+      "REQUIRES_HUMAN_DECISION": "orchestration_large",
+      "RUN_DOMAIN_REVIEW": "domain_reasoning",
+      "RUN_POSTFLIGHT": "execution_fast",
+      "RUN_PREFLIGHT": "execution_fast",
+      "RUN_REVIEW": "review_reasoning",
+      "RUN_VALIDATOR": "validation_reasoning"
+    },
+    "aliases": {
+      "domain_reasoning": {
+        "cost_tier": "medium_high",
+        "model": "domain-review-model",
+        "notes": "Use a strong reasoning model when domain semantics are subtle.",
+        "provider": "ide-default",
+        "reasoning_effort": "high",
+        "use_for": [
+          "domain-reviewer-agent",
+          "project-pack semantic review"
+        ]
+      },
+      "execution_fast": {
+        "cost_tier": "low",
+        "model": "small-fast-coding-model",
+        "notes": "Cheap/fast model for low-risk deterministic work.",
+        "provider": "ide-default",
+        "reasoning_effort": "low",
+        "use_for": [
+          "status",
+          "doctor",
+          "formatting reports",
+          "simple deterministic edits"
+        ]
+      },
+      "execution_medium": {
+        "cost_tier": "medium",
+        "model": "medium-coding-model",
+        "notes": "Default implementation model. Escalate to orchestration_large for critical/ambiguous tasks.",
+        "provider": "ide-default",
+        "reasoning_effort": "medium",
+        "use_for": [
+          "build-agent implementation",
+          "repair-agent implementation",
+          "test updates inside approved scope"
+        ]
+      },
+      "orchestration_large": {
+        "cost_tier": "high",
+        "model": "gpt-5.5",
+        "notes": "Use the highest-intelligence model available to your IDE/workspace for orchestration. Replace model with your actual available model ID.",
+        "provider": "openai",
+        "reasoning_effort": "high",
+        "use_for": [
+          "build-auto orchestration",
+          "planning handoffs",
+          "hard trade-off decisions",
+          "failure classification"
+        ]
+      },
+      "review_reasoning": {
+        "cost_tier": "medium_high",
+        "model": "claude-sonnet-or-equivalent-review-model",
+        "notes": "Reviewer should ideally differ from the builder model/provider for independence.",
+        "provider": "anthropic-or-ide-default",
+        "reasoning_effort": "high",
+        "use_for": [
+          "test-agent",
+          "principal-engineer-agent",
+          "adversarial-review"
+        ]
+      },
+      "validation_reasoning": {
+        "cost_tier": "medium_high",
+        "model": "codex-or-equivalent-validation-model",
+        "notes": "Validation should be independent from implementation and should prefer structured-output reliability.",
+        "provider": "openai-or-ide-default",
+        "reasoning_effort": "high",
+        "use_for": [
+          "validator-agent",
+          "contract proof",
+          "evidence mapping"
+        ]
+      }
+    },
+    "budgets": {
+      "domain_reasoning": {
+        "max_context_tokens": 24000,
+        "max_output_tokens": 5000
+      },
+      "execution_fast": {
+        "max_context_tokens": 12000,
+        "max_output_tokens": 3000
+      },
+      "execution_medium": {
+        "max_context_tokens": 20000,
+        "max_output_tokens": 5000
+      },
+      "orchestration_large": {
+        "max_context_tokens": 32000,
+        "max_output_tokens": 6000
+      },
+      "review_reasoning": {
+        "max_context_tokens": 24000,
+        "max_output_tokens": 5000
+      },
+      "validation_reasoning": {
+        "max_context_tokens": 24000,
+        "max_output_tokens": 5000
+      }
+    },
+    "defaults": {
+      "builder": "execution_medium",
+      "delivery": "execution_fast",
+      "doctor": "execution_fast",
+      "domain_reviewer": "domain_reasoning",
+      "orchestrator": "orchestration_large",
+      "repair": "execution_medium",
+      "reviewer": "review_reasoning",
+      "teacher": "orchestration_large",
+      "validator": "validation_reasoning"
+    },
+    "description": "Role-based model routing. Values are aliases; map them to the concrete models available in your IDE/API workspace.",
+    "enabled": true,
+    "escalation_policy": {
+      "ambiguous_or_blocked_use": "orchestration_large",
+      "critical_risk_tasks_use": "orchestration_large",
+      "repair_attempt_2_or_more_use": "orchestration_large",
+      "schema_or_data_loss_risk_use": "orchestration_large"
+    },
+    "fallback_policy": {
+      "allow_ide_default": true,
+      "if_alias_unavailable": "stop_for_high_risk_otherwise_warn",
+      "require_human_confirmation_for_high_risk_fallback": true
+    },
+    "independence_policy": {
+      "block_if_same_alias_for_critical_tasks": false,
+      "domain_reviewer_should_differ_from_builder_when_possible": true,
+      "reviewer_should_differ_from_builder": true,
+      "validator_should_differ_from_builder": true,
+      "warn_if_same_alias": true
+    },
+    "provider_agnostic": true,
+    "role_bindings": {
+      "build-agent": "execution_medium",
+      "build-auto": "orchestration_large",
+      "build-next": "orchestration_large",
+      "build-status": "execution_fast",
+      "delivery-agent": "execution_fast",
+      "doctor": "execution_fast",
+      "domain-reviewer-agent": "domain_reasoning",
+      "principal-engineer-agent": "review_reasoning",
+      "repair-agent": "execution_medium",
+      "teacher-agent": "orchestration_large",
+      "test-agent": "review_reasoning",
+      "validator-agent": "validation_reasoning"
+    }
+  },
+  "operator_manual": {
+    "flowcharts": "mermaid",
+    "path": "docs/operator-manual/README.md"
+  },
+  "orchestrator": {
+    "default_mode": "auto",
+    "lock_stale_minutes": 120,
+    "max_action_seconds": 3600,
+    "max_repair_attempts_per_task": 3
+  },
+  "project_pack": {
+    "enabled": true,
+    "name": "invoice-governance",
+    "path": "project-packs/invoice-governance"
+  },
+  "repository": {
+    "protected_branch_patterns": [
+      "^release/",
+      "^prod/",
+      "^production/"
+    ],
+    "protected_branches": [
+      "main",
+      "master",
+      "develop"
+    ],
+    "require_clean_start": true,
+    "require_new_run_branch": true,
+    "run_branch_pattern": "agent/{run_id}"
+  },
+  "schema_version": "0.6.0",
+  "scope_control": {
+    "allow_governance_paths": [
+      "tasks/feature_list.json",
+      "tasks/run_state.json",
+      "docs/implementation-results/**",
+      "docs/reviews/**",
+      "docs/validation-results/**",
+      "docs/commit-results/**",
+      "docs/evidence/**"
+    ],
+    "default_forbidden_paths": [
+      ".env",
+      "**/.env",
+      "**/*.pem",
+      "**/*.key",
+      "docs/intents/**",
+      "docs/expectations/**",
+      "data/truth/**",
+      "harness.config.json"
+    ],
+    "require_allowed_paths_for_code_tasks": true
+  },
+  "security": {
+    "blocked_shell_fragments": [
+      "rm -rf /",
+      "git push --force",
+      "git reset --hard",
+      "curl | sh",
+      "Invoke-WebRequest | iex"
+    ],
+    "secret_scan": {
+      "enabled": true,
+      "fail_on_detection": true,
+      "scan_before_commit": true
+    }
+  },
+  "teach_me": {
+    "enabled": true,
+    "html_report_required": true,
+    "learning_closure_is_separate_from_engineering_closure": true,
+    "mastery_dimensions": [
+      "problem",
+      "solution",
+      "design_decisions",
+      "edge_cases",
+      "validation",
+      "impact",
+      "current_status"
+    ],
+    "mode": "post_run_interactive",
+    "report_command": "python -B scripts/teach_me_report.py --run-id {run_id}",
+    "report_paths": {
+      "checklist": "docs/learning/{run_id}-teach-me-checklist.md",
+      "html": "docs/teach-me-reports/{run_id}/teach-me.html",
+      "json": "docs/teach-me-reports/{run_id}/teach-me.json",
+      "markdown": "docs/teach-me-reports/{run_id}/teach-me.md"
+    },
+    "require_incremental_mastery": true,
+    "require_quiz_before_learning_closure": true,
+    "require_restatement_first": true
+  },
+  "test_strategy": {
+    "default_hierarchy": [
+      "unit",
+      "integration",
+      "local_e2e",
+      "cloud_e2e"
+    ],
+    "description": "Hierarchical verification policy for unit, integration, local E2E, and cloud E2E testing.",
+    "enabled": true,
+    "evidence_paths": {
+      "cloud_e2e": "docs/test-evidence/{run_id}/cloud-e2e.json",
+      "integration": "docs/test-evidence/{run_id}/{task_id}/integration.json",
+      "local_e2e": "docs/test-evidence/{run_id}/local-e2e.json",
+      "unit": "docs/test-evidence/{run_id}/{task_id}/unit.json"
+    },
+    "gating": {
+      "cloud_e2e": "goal_loop_or_explicit_environment_authority_only",
+      "integration": "required_when_boundary_touched",
+      "local_e2e": "required_before_finalize_when_pipeline_touched",
+      "unit": "required_per_task_when_testable"
+    },
+    "idsd_generation": {
+      "all_tiers_must_be_declared": [
+        "unit",
+        "integration",
+        "local_e2e",
+        "cloud_e2e"
+      ],
+      "cloud_e2e_requires_explicit_authority": true,
+      "expectations_must_include_testing_matrix": true,
+      "non_required_tiers_must_have_reason": true,
+      "pipeline_tasks_default_highest_tier": "local_e2e",
+      "task_contracts_must_include_test_expectations": true
+    },
+    "pipeline_defaults": {
+      "pipeline_keywords": [
+        "pipeline",
+        "ingestion",
+        "etl",
+        "elt",
+        "bronze",
+        "silver",
+        "gold",
+        "databricks",
+        "spark",
+        "job"
+      ],
+      "requires_failure_path_evidence_for_invalid_input": true,
+      "requires_idempotency_evidence_when_stateful": true,
+      "requires_local_e2e_before_finalize": true
+    },
+    "tiers": {
+      "cloud_e2e": {
+        "applies_to": [
+          "Azure",
+          "Databricks",
+          "remote jobs",
+          "cloud infrastructure",
+          "deployed runtime"
+        ],
+        "default_commands": [],
+        "not_run_by_build_auto_by_default": true,
+        "purpose": "Prove the deployed runtime in Azure, Databricks, or another remote environment.",
+        "requires_goal_or_environment_authority": true
+      },
+      "integration": {
+        "applies_to": [
+          "database",
+          "filesystem",
+          "schema",
+          "adapters",
+          "queues",
+          "APIs",
+          "stateful persistence"
+        ],
+        "default_commands": [
+          "python -B -m pytest tests/integration -q"
+        ],
+        "purpose": "Prove local boundaries such as DB, filesystem, schema, adapters, APIs, queues, or orchestration contracts.",
+        "required_when_boundary_touched": true
+      },
+      "local_e2e": {
+        "applies_to": [
+          "pipelines",
+          "ingestion",
+          "ETL/ELT",
+          "CLI/job entrypoints",
+          "multi-stage data flow"
+        ],
+        "default_commands": [
+          "python -B -m pytest tests/e2e -q"
+        ],
+        "purpose": "Prove a complete local pipeline from source fixture to validated output.",
+        "required_before_finalize_when_pipeline_touched": true
+      },
+      "unit": {
+        "applies_to": [
+          "pure functions",
+          "parsers",
+          "validators",
+          "mappers",
+          "business rules",
+          "small utilities"
+        ],
+        "default_commands": [
+          "python -B -m pytest tests/unit -q",
+          "python -B -m unittest discover -s tests/unit -q"
+        ],
+        "purpose": "Prove isolated logic at low cost.",
+        "required_by_default": true
+      }
+    }
+  }
+}

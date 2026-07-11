@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Teach Me Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "generated_at",
+    "tasks",
+    "paths"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "head": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "engineering_status": {
+      "type": "string"
+    },
+    "current_stage": {
+      "type": "string"
+    },
+    "learning_status": {
+      "type": "string"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "status"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "commit_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "files_changed": {
+            "type": "array"
+          },
+          "verification_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reviews": {
+            "type": "object"
+          },
+          "domain_review": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validator": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "test_expectations_summary": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "idsd_artifacts": {
+      "type": "object"
+    },
+    "paths": {
+      "type": "object",
+      "required": [
+        "json",
+        "markdown",
+        "html",
+        "checklist"
+      ],
+      "properties": {
+        "json": {
+          "type": "string"
+        },
+        "markdown": {
+          "type": "string"
+        },
+        "html": {
+          "type": "string"
+        },
+        "checklist": {
+          "type": "string"
+        }
+      }
+    },
+    "testing_coverage": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

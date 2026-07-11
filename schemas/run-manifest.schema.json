@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Run Manifest","type":"object","required":["run_id","status","scope","source_artifacts"],"properties":{"run_id":{"type":"string"},"status":{"enum":["draft","approved","superseded"]},"scope":{"type":"object"},"source_artifacts":{"type":"array"}},"additionalProperties":true}

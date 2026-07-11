@@ -1,0 +1,27 @@
+---
+description: Structured multi-dimensional review policy inspired by ADLC-style pre-push gates.
+alwaysApply: false
+globs: ["**/*"]
+---
+
+# Review Policy
+
+Reviews must be structured findings, not impressions.
+
+## Required dimensions
+
+- Correctness: logic, edge cases, concurrency, null/none, state transitions, data loss.
+- Test coverage: acceptance criteria, negative cases, RED/GREEN evidence, determinism.
+- Architecture: boundaries, layering, API contracts, dependency direction, scope fit.
+- Quality: naming, readability, duplication, complexity, maintainability.
+- Security/privacy: secrets, injection, authz/authn, sensitive data, unsafe dependencies.
+- Operability: observability, retries, failure modes, configuration, deployment impact.
+- Domain: only when a project pack is active.
+
+## Finding format
+
+Every finding must include severity, location, violated requirement/invariant, problem, evidence, required outcome, and suggested regression test where applicable.
+
+## Gate rule
+
+Any BLOCKER finding fails the review gate. MAJOR findings require repair or explicit human acceptance. MINOR/NIT findings must not trigger broad unrelated refactors.

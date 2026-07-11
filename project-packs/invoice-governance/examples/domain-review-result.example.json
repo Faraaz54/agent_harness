@@ -1,0 +1,11 @@
+{
+  "review_type": "invoice-domain",
+  "task_id": "ING-001",
+  "verdict": "CHANGES_REQUIRED",
+  "invariants": [
+    {"id": "LINEAGE-001", "status": "FAIL", "evidence": ["src/..."]}
+  ],
+  "findings": [
+    {"severity": "MAJOR", "title": "Rejected rows lose source lineage", "required_outcome": "Rejected rows include source_file_id and source_row_number."}
+  ]
+}

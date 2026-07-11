@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Task Validation Result","type":"object","required":["task_id","verdict","acceptance_criteria"],"properties":{"task_id":{"type":"string"},"verdict":{"enum":["PASS","REJECT","BLOCKED"]},"acceptance_criteria":{"type":"array"},"findings":{"type":"array"}},"additionalProperties":true}

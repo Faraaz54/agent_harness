@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "intent_id": "local-contractor-ingestion-pipeline",
+  "tasks": [
+    {
+      "task_id": "ING-001",
+      "epic_id": "INGESTION-EPIC-001",
+      "objective": "Load one SAP work-order source file into bronze with row-level lineage",
+      "behavior": "Parse an approved SAP work-order CSV and persist one bronze record per accepted raw row with source file and row identifiers",
+      "scope": [
+        "src/ingestion",
+        "tests"
+      ],
+      "non_goals": [
+        "No DSX parsing",
+        "No Databricks execution",
+        "No silver normalization"
+      ],
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Valid rows are represented in bronze with source_file_id and source_row_number.",
+        "Invalid rows are rejected with reason code and source lineage.",
+        "The focused parser verification command passes."
+      ],
+      "negative_cases": [
+        "Malformed rows are not silently dropped or accepted."
+      ],
+      "verification": {
+        "commands": [
+          "python -B -m pytest tests -q -p no:cacheprovider"
+        ],
+        "test_tiers": [
+          "unit",
+          "integration",
+          "local_e2e"
+        ]
+      },
+      "required_reviewers": [
+        "test-agent",
+        "principal-engineer-agent",
+        "domain-reviewer-agent"
+      ],
+      "risk_level": "medium",
+      "stop_conditions": [
+        "Task requires cloud deployment",
+        "Task requires changing approved expectations"
+      ],
+      "test_expectations": {
+        "highest_required_tier": "local_e2e",
+        "tier_rationale": "This task introduces a source-to-bronze pipeline slice with persistence, lineage, rejection handling, and fixture-based execution.",
+        "unit": {
+          "required": true,
+          "what_to_test": [
+            "CSV parser extracts expected fields",
+            "required-column validation",
+            "source lineage key construction",
+            "malformed row classification"
+          ],
+          "evidence_required": [
+            "focused RED/GREEN unit tests under tests/unit or equivalent"
+          ]
+        },
+        "integration": {
+          "required": true,
+          "what_to_test": [
+            "fixture CSV is read from local filesystem",
+            "accepted rows persist to bronze store",
+            "rejected rows persist with reason code and source lineage"
+          ],
+          "evidence_required": [
+            "local integration test output proving DB/filesystem boundary behaviour"
+          ]
+        },
+        "local_e2e": {
+          "required": true,
+          "what_to_test": [
+            "run ingestion against fixture landing directory",
+            "verify bronze row counts",
+            "verify rejection row counts",
+            "verify source lineage is queryable end to end"
+          ],
+          "evidence_required": [
+            "local E2E command output and assertions for counts/lineage"
+          ]
+        },
+        "cloud_e2e": {
+          "required": false,
+          "what_to_test": [],
+          "evidence_required": [],
+          "not_required_reason": "Cloud Azure/Databricks execution is outside build-auto and requires goal-auto or explicit environment authority."
+        },
+        "coverage_map": [
+          {
+            "criterion": "Valid rows are represented in bronze with source_file_id and source_row_number.",
+            "tiers": [
+              "unit",
+              "integration",
+              "local_e2e"
+            ]
+          },
+          {
+            "criterion": "Invalid rows are rejected with reason code and source lineage.",
+            "tiers": [
+              "unit",
+              "integration",
+              "local_e2e"
+            ]
+          },
+          {
+            "criterion": "The focused parser verification command passes.",
+            "tiers": [
+              "unit"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

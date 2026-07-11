@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.6.0",
+  "hooks": [
+    {
+      "name": "harness-policy",
+      "script": ".cursor/hooks/harness_hook.py",
+      "mode": "advisory_or_blocking_by_ide"
+    }
+  ]
+}

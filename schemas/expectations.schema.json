@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Expectations",
+  "type": "object",
+  "required": [
+    "intent_id",
+    "success_scenarios",
+    "failure_scenarios",
+    "acceptance_criteria"
+  ],
+  "properties": {
+    "intent_id": {
+      "type": "string"
+    },
+    "success_scenarios": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_scenarios": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation_strategy": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "testing_expectations_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "behavior_or_risk",
+          "unit",
+          "integration",
+          "local_e2e",
+          "cloud_e2e"
+        ],
+        "properties": {
+          "behavior_or_risk": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "integration": {
+            "type": "string"
+          },
+          "local_e2e": {
+            "type": "string"
+          },
+          "cloud_e2e": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "required_testing_tiers": {
+      "type": "object",
+      "properties": {
+        "unit": {
+          "type": "object"
+        },
+        "integration": {
+          "type": "object"
+        },
+        "local_e2e": {
+          "type": "object"
+        },
+        "cloud_e2e": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

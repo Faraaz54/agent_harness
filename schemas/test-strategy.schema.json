@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Harness Test Strategy",
+  "type": "object",
+  "required": [
+    "enabled",
+    "tiers",
+    "gating"
+  ],
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "default_hierarchy": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "unit",
+          "integration",
+          "local_e2e",
+          "cloud_e2e"
+        ]
+      }
+    },
+    "tiers": {
+      "type": "object"
+    },
+    "gating": {
+      "type": "object"
+    },
+    "pipeline_defaults": {
+      "type": "object"
+    }
+  }
+}

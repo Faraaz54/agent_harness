@@ -1,0 +1,38 @@
+---
+description: Hierarchical, behaviour-mapped testing policy for vertical-slice agent implementation.
+alwaysApply: true
+---
+
+# Testing Policy
+
+Testing must prove behaviour at the lowest sufficient level first, then escalate through the hierarchy only where the task risk or boundary requires it.
+
+## Mandatory hierarchy
+
+1. **Unit tests** — required for pure logic, parsing, validation, rule functions, mapping, and small utilities.
+2. **Integration tests** — required when a task touches persistence, filesystem IO, schema contracts, external adapters, queues, APIs, or orchestration boundaries.
+3. **Local end-to-end tests** — required before closure for pipeline work or any task that changes multiple pipeline stages.
+4. **Cloud end-to-end tests** — required only when a goal/environment contract explicitly authorises Azure, Databricks, or other remote execution.
+
+## Core rules
+
+- Map every acceptance criterion to at least one behavioural test or a documented non-test evidence item.
+- Map every negative case to a failure-path test where feasible.
+- Prefer RED evidence before production code for any testable behaviour.
+- A RED test must fail for the missing behaviour, not because of import errors, malformed fixtures, or unrelated breakage.
+- A GREEN result must include focused tests first and configured regression/gate checks second.
+- Do not mock the unit under test.
+- Do not add tests that only assert implementation structure.
+- Do not skip, xfail, delete, or weaken tests to make the run pass.
+- For repair cycles, add a regression test that would have caught the defect.
+- For persistent state, idempotency, retries, concurrency, schema migration, data contracts, or external boundaries, include the relevant integration or local E2E failure-path test.
+- For pipeline projects, local E2E evidence must show source input, execution command, produced outputs, invariants checked, and rejected/invalid records where relevant.
+- Cloud E2E tests must not run unless the approved goal/environment authority permits remote execution and cost/security boundaries are recorded.
+- If a task is not practically testable locally, record why and require stronger reviewer/validator evidence.
+
+## Evidence required by tier
+
+- Unit: test file, command, RED/GREEN evidence, mapped acceptance criteria.
+- Integration: boundary touched, fixture setup, command, cleanup/isolation behaviour, observed state/output.
+- Local E2E: dataset/fixture identity, pipeline command, output location, validation report, idempotency/rerun evidence when stateful.
+- Cloud E2E: deployed artifact identity, environment, run/job ID, logs, validation queries, cost/runtime envelope, cleanup/retention result.

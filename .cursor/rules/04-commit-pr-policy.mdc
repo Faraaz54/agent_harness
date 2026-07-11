@@ -1,0 +1,7 @@
+---
+description: Governed commit and PR policy.
+alwaysApply: true
+---
+
+- Direct push, force push, and merge are forbidden by default.
+- Use governed commit scripts after validator and postflight pass.

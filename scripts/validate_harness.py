@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import json, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+REQ=['docs/operator-manual/README.md', 'scripts/schema_validator.py', 'scripts/orchestrator_lock.py', 'scripts/secret_scan.py', 'scripts/scope_guard.py', 'scripts/evidence_ledger.py', 'scripts/project_pack.py', 'scripts/install_harness.py', 'scripts/verify_installation.py', 'scripts/ci_parity.py', 'scripts/harness_selftest.py','fixtures/tiny-python-pipeline/README.md','scripts/run_state_ops.py', 'scripts/rollback_task.py', 'scripts/abort_run.py', 'scripts/resume_run.py', 'scripts/unblock_task.py', 'scripts/defer_task.py', '.cursor/commands/rollback-task.md', '.cursor/commands/abort-run.md', '.cursor/commands/resume-run.md', '.cursor/commands/unblock-task.md', '.cursor/commands/defer-task.md', '.cursor/commands/project-pack.md', '.cursor/commands/ci-parity.md', '.cursor/commands/verify-installation.md', '.cursor/hooks.json', '.cursor/hooks/harness_hook.py', 'project-packs/invoice-governance/project-pack.json', 'project-packs/generic-python/project-pack.json'] + ['docs/harness/testing-expectations-in-idsd.md', 'docs/harness/teach-me-design.md', '.cursor/commands/teach-report.md', 'schemas/teach-me-report.schema.json', 'scripts/teach_me_report.py', 'scripts/model_router.py', 'schemas/model-routing.schema.json', '.cursor/commands/model-status.md', '.cursor/rules/07-model-routing.mdc', 'docs/harness/model-routing.md', 'scripts/harness_doctor.py', '.cursor/skills/lesson-memory/SKILL.md', '.cursor/skills/reflection/SKILL.md', '.cursor/skills/adversarial-review/SKILL.md', '.cursor/skills/harness-doctor/SKILL.md', '.cursor/rules/06-review-policy.mdc', '.cursor/rules/05-loop-safety-and-memory.mdc', '.cursor/commands/doctor.md', '.cursor/commands/test-strategy.md', '.cursor/skills/test-hierarchy/SKILL.md', 'docs/harness/testing-strategy.md', 'scripts/test_strategy.py', 'schemas/test-strategy.schema.json', 'project-packs/invoice-governance/skills/invoice-domain-review/references/pipeline-testing-strategy.md', 'AGENTS.md', 'README.md', 'harness.config.json', '.cursor/commands/build-auto.md', '.cursor/commands/build-next.md', '.cursor/commands/build-status.md', '.cursor/commands/prepare-run.md', '.cursor/commands/start-run.md', '.cursor/commands/postflight.md', '.cursor/commands/commit-task.md', '.cursor/commands/finalize-session.md', '.cursor/commands/prepare-pr.md', '.cursor/commands/create-pr.md', '.cursor/commands/teach-me.md', '.cursor/skills/using-agent-skills/SKILL.md', '.cursor/skills/build-orchestration/SKILL.md', '.cursor/skills/red-green-vertical-slice/SKILL.md', '.cursor/skills/simple-python-implementation/SKILL.md', '.cursor/skills/testing-patterns/SKILL.md', '.cursor/skills/definition-of-done/SKILL.md', '.cursor/skills/code-review/SKILL.md', '.cursor/skills/gilfoyle-code-review/SKILL.md', '.cursor/skills/self-explanatory-code-comments/SKILL.md', '.cursor/skills/oop-design-patterns/SKILL.md', '.cursor/skills/docker-containerization/SKILL.md', '.cursor/skills/github-actions-ci-cd/SKILL.md', '.cursor/skills/azure-naming/SKILL.md', '.cursor/skills/bicep-best-practices/SKILL.md', '.cursor/skills/environment-bootstrap/SKILL.md', '.cursor/skills/verified-commit/SKILL.md', '.cursor/skills/pull-request-delivery/SKILL.md', '.cursor/skills/run-manifest-preparation/SKILL.md', '.cursor/skills/session-reporting/SKILL.md', '.cursor/skills/teach-me/SKILL.md', '.cursor/agents/build-agent.md', '.cursor/agents/test-agent.md', '.cursor/agents/principal-engineer-agent.md', '.cursor/agents/validator-agent.md', '.cursor/agents/domain-reviewer-agent.md', '.cursor/agents/delivery-agent.md', '.cursor/agents/teacher-agent.md', 'scripts/build_orchestrator.py', 'scripts/orchestratorlib.py', 'scripts/prepare_run.py', 'scripts/preflight.py', 'scripts/postflight.py', 'scripts/commit_task.py', 'scripts/finalize_session.py', 'scripts/session_report.py', 'scripts/prepare_pr.py', 'scripts/commit_run_artifacts.py', 'scripts/approve_delivery.py', 'scripts/create_pr.py', 'scripts/bootstrap_environment.py', 'scripts/validate_harness.py', 'schemas/intent.schema.json', 'schemas/context-pack.schema.json', 'schemas/expectations.schema.json', 'schemas/task-contracts.schema.json', 'schemas/orchestrator-action.schema.json', 'schemas/implementation-result.schema.json', 'schemas/review-result.schema.json', 'schemas/task-validation.schema.json', 'docs/harness/idsd-and-build-auto.md', 'docs/harness/project-pack-design.md', 'docs/harness/restored-skills-audit.md', 'docs/harness/directory-layout.md', 'project-packs/generic-python/skills/python-domain-review/SKILL.md', 'project-packs/invoice-governance/skills/invoice-domain-review/SKILL.md', 'project-packs/invoice-governance/agents/domain-reviewer-agent.md']
+def main():
+    root=Path(sys.argv[1] if len(sys.argv)>1 else '.').resolve(); errors=[]
+    for r in REQ:
+        if not (root/r).is_file(): errors.append(f'missing {r}')
+    try:
+        cfg=json.loads((root/'harness.config.json').read_text())
+        mr=cfg.get('model_routing',{})
+        if mr.get('enabled') is not True: errors.append('model_routing.enabled must be true')
+        tm=cfg.get('teach_me',{})
+        if tm.get('enabled') is not True: errors.append('teach_me.enabled must be true')
+        if not tm.get('report_paths',{}).get('html'): errors.append('teach_me.report_paths.html missing')
+        enf=cfg.get('enforcement',{})
+        for key in ['schema_validation_required','state_machine_enforced','orchestrator_lock_required','scope_guard_required','secret_scan_required','evidence_ledger_required']:
+            if enf.get(key) is not True: errors.append(f'enforcement.{key} must be true')
+        ts=cfg.get('test_strategy',{})
+        if ts.get('enabled') is not True: errors.append('test_strategy.enabled must be true')
+        for tier in ['unit','integration','local_e2e','cloud_e2e']:
+            if tier not in ts.get('tiers',{}): errors.append(f'test_strategy.tiers.{tier} missing')
+        idsd=ts.get('idsd_generation',{})
+        if idsd.get('expectations_must_include_testing_matrix') is not True: errors.append('test_strategy.idsd_generation.expectations_must_include_testing_matrix must be true')
+        if idsd.get('task_contracts_must_include_test_expectations') is not True: errors.append('test_strategy.idsd_generation.task_contracts_must_include_test_expectations must be true')
+        for tier in ['unit','integration','local_e2e','cloud_e2e']:
+            if tier not in idsd.get('all_tiers_must_be_declared',[]): errors.append(f'test_strategy.idsd_generation missing tier {tier}')
+        for key in ['aliases','role_bindings','action_bindings','fallback_policy']:
+            if not mr.get(key): errors.append(f'model_routing.{key} missing')
+        aliases=mr.get('aliases',{})
+        for role in ['build-auto','build-agent','test-agent','principal-engineer-agent','validator-agent','domain-reviewer-agent']:
+            alias=mr.get('role_bindings',{}).get(role)
+            if not alias or alias not in aliases: errors.append(f'model routing missing valid role binding for {role}')
+    except Exception as e: errors.append(f'bad harness.config.json: {e}')
+    if errors:
+        print('\n'.join('ERROR '+e for e in errors)); return 1
+    print('Harness validation passed.'); return 0
+if __name__=='__main__': raise SystemExit(main())

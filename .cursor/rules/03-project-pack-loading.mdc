@@ -1,0 +1,8 @@
+---
+description: Load domain/project pack only when configured.
+alwaysApply: true
+---
+
+- The core harness is domain-neutral.
+- Load project-pack rules, skills, and reviewers from `harness.config.json` only when enabled.
+- Do not apply invoice-specific rules to unrelated projects.

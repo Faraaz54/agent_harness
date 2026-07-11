@@ -1,0 +1,10 @@
+{
+  "name": "generic-python",
+  "version": "0.1.0",
+  "compatible_harness_versions": [">=0.5.6 <0.7.0"],
+  "agents": [],
+  "skills": ["python-domain-review"],
+  "rules": [],
+  "schemas": [],
+  "required_files": ["README.md", "skills/python-domain-review/SKILL.md"]
+}

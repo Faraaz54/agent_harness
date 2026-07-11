@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "model-routing.schema.json",
+  "title": "Harness Model Routing Configuration",
+  "type": "object",
+  "required": ["enabled", "aliases", "role_bindings", "action_bindings", "fallback_policy"],
+  "properties": {
+    "enabled": {"type": "boolean"},
+    "provider_agnostic": {"type": "boolean"},
+    "description": {"type": "string"},
+    "defaults": {"type": "object", "additionalProperties": {"type": "string"}},
+    "aliases": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["provider", "model", "reasoning_effort", "use_for", "cost_tier"],
+        "properties": {
+          "provider": {"type": "string"},
+          "model": {"type": "string"},
+          "reasoning_effort": {"enum": ["low", "medium", "high"]},
+          "use_for": {"type": "array", "items": {"type": "string"}},
+          "cost_tier": {"type": "string"},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "role_bindings": {"type": "object", "additionalProperties": {"type": "string"}},
+    "action_bindings": {"type": "object", "additionalProperties": {"type": "string"}},
+    "escalation_policy": {"type": "object", "additionalProperties": {"type": "string"}},
+    "independence_policy": {"type": "object"},
+    "budgets": {"type": "object", "additionalProperties": {"type": "object"}},
+    "fallback_policy": {
+      "type": "object",
+      "required": ["if_alias_unavailable", "allow_ide_default"],
+      "properties": {
+        "if_alias_unavailable": {"type": "string"},
+        "allow_ide_default": {"type": "boolean"},
+        "require_human_confirmation_for_high_risk_fallback": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

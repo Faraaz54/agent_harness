@@ -1,0 +1,14 @@
+---
+description: Enforce role-based model routing and independence between build, review and validation roles.
+alwaysApply: true
+---
+
+# Model routing
+
+- Read `harness.config.json:model_routing` before selecting or invoking a model-specific role.
+- Use high-intelligence orchestration models for `/build-auto`, blocked states, hard trade-off decisions and failure classification.
+- Use cheaper execution models only for bounded implementation, deterministic scripts, status checks and report formatting.
+- Review and validation should be performed by models independent from the implementation model when possible.
+- Do not silently fall back from a high-reasoning validation/review model to a cheaper execution model on high-risk tasks.
+- Surface model fallback, alias mismatch, unavailable models and independence-policy violations in action evidence.
+- Treat model names as configurable aliases, not hard-coded truth about what the current IDE workspace supports.

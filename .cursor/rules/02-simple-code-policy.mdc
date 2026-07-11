@@ -1,0 +1,17 @@
+---
+description: Ponytail-style simple implementation rule: readable, direct, dependency-light, and task-bounded.
+alwaysApply: true
+---
+
+# Simple Code Policy
+
+- Prefer the smallest readable implementation that satisfies the current task contract.
+- Prefer functions over classes until state, polymorphism, or lifecycle management is actually required.
+- Prefer standard library and existing project utilities over new dependencies.
+- Match existing project style before introducing new conventions.
+- Use clear names and direct control flow over cleverness.
+- Keep public boundaries typed where the project supports typing.
+- Use explicit, narrow exceptions and failure states.
+- Avoid broad `except Exception`, hidden globals, mutable module state, registries, factories, plugin systems, inheritance trees, or frameworks unless the task explicitly justifies them.
+- Do not implement future tasks early.
+- Do not refactor surrounding code unless the task cannot be completed safely without it; if so, stop and request scope amendment.

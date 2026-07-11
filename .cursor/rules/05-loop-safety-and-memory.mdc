@@ -1,0 +1,15 @@
+---
+description: Prevent repeated mistakes, unbounded loops, stale context, and silent partial success in autonomous runs.
+alwaysApply: true
+---
+
+# Loop Safety and Memory
+
+- Read `docs/learning/agent-repair-memory.md` or `tasks/repair_memory.json` when present before implementing or repairing.
+- When a review or gate fails, classify the failure before fixing it: code defect, test defect, environment defect, contract ambiguity, scope expansion, transient failure, or harness defect.
+- Do not retry the same failed command more than the configured limit without a changed hypothesis.
+- Each repair attempt must state the hypothesis, changed files, expected test signal, and rollback plan.
+- After every repair, invalidate stale postflight, review, and validator evidence.
+- If the same finding pattern appears twice, write or update a repair-memory entry.
+- If budget or context is low, checkpoint and stop rather than continuing with degraded comprehension.
+- Never convert partial success into final success; skipped work is a blocker or residual risk.

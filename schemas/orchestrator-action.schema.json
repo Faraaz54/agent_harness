@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orchestrator Action",
+  "type": "object",
+  "required": ["action_id", "run_id", "action", "model_routing"],
+  "properties": {
+    "action_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "task_id": {"type": ["string", "null"]},
+    "action": {
+      "enum": [
+        "RUN_PREFLIGHT", "IMPLEMENT_TASK", "REPAIR_TASK", "RUN_POSTFLIGHT",
+        "RUN_REVIEW", "RUN_DOMAIN_REVIEW", "RUN_VALIDATOR", "COMMIT_TASK",
+        "FINALIZE_SESSION", "BLOCKED", "COMPLETE", "REQUIRES_HUMAN_DECISION"
+      ]
+    },
+    "model_routing": {
+      "type": "object",
+      "required": ["alias"],
+      "properties": {
+        "alias": {"type": ["string", "null"]},
+        "provider": {"type": "string"},
+        "model": {"type": "string"},
+        "reasoning_effort": {"type": "string"},
+        "cost_tier": {"type": "string"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

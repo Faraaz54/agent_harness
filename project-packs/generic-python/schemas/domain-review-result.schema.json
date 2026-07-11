@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Generic Python Domain Review Result","type":"object","required":["task_id","verdict","findings"],"properties":{"task_id":{"type":"string"},"verdict":{"enum":["PASS","CHANGES_REQUIRED","BLOCKED"]},"findings":{"type":"array"}},"additionalProperties":true}

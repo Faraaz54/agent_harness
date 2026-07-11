@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0",
+  "note": "Example only. Real private evals should not be exposed to the build agent.",
+  "private_checks": []
+}
