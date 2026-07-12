@@ -1,0 +1,84 @@
+{
+  "artifacts": {
+    "context": "docs/context/simulated-local-pipeline.json",
+    "expectations": "docs/expectations/simulated-local-pipeline.json",
+    "intent": "docs/intents/simulated-local-pipeline.md",
+    "tasks": "docs/task-contracts/simulated-local-pipeline.json"
+  },
+  "command_results": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-B",
+        "scripts/schema_validator.py",
+        "--kind",
+        "expectations",
+        "--path",
+        "docs/expectations/simulated-local-pipeline.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"verdict\": \"PASS\",\n  \"kind\": \"expectations\",\n  \"path\": \"docs/expectations/simulated-local-pipeline.json\"\n}\n"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-B",
+        "scripts/validate_expectations.py",
+        "--expectations",
+        "docs/expectations/simulated-local-pipeline.json",
+        "--output",
+        "docs/validation-reports/simulated-local-pipeline-expectations-validation.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"agent\": \"expectation-validation-agent\",\n  \"intent_id\": \"simulated-local-pipeline\",\n  \"verdict\": \"PASS\",\n  \"schema_validation\": {\n    \"status\": \"PASS\",\n    \"schema\": \"schemas/expectations.schema.json\",\n    \"errors\": []\n  },\n  \"semantic_checks\": [\n    {\n      \"check\": \"expectations schema\",\n      \"status\": \"PASS\",\n      \"evidence\": \"schemas/expectations.schema.json\"\n    },\n    {\n      \"check\": \"testing expectations matrix declares all tiers\",\n      \"status\": \"PASS\",\n      \"evidence\": \"testing_expectations_matrix\"\n    },\n    {\n      \"check\": \"required_testing_tiers declares all tiers\",\n      \"status\": \"PASS\",\n      \"evidence\": \"required_testing_tiers\"\n    },\n    {\n      \"check\": \"success and failure scenarios present\",\n      \"status\": \"PASS\",\n      \"evidence\": \"success_scenarios/failure_scenarios\"\n    }\n  ],\n  \"findings\": [],\n  \"model_routing\": {\n    \"alias\": \"validation_reasoning\",\n    \"selected_model\": \"operator-or-ide-selected\"\n  },\n  \"validated_at\": \"2026-07-12T11:44:43.807447+00:00\"\n}\n"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-B",
+        "scripts/schema_validator.py",
+        "--kind",
+        "task-contracts",
+        "--path",
+        "docs/task-contracts/simulated-local-pipeline.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"verdict\": \"PASS\",\n  \"kind\": \"task-contracts\",\n  \"path\": \"docs/task-contracts/simulated-local-pipeline.json\"\n}\n"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-B",
+        "scripts/test_strategy.py",
+        "validate-contracts",
+        "--contracts",
+        "docs/task-contracts/simulated-local-pipeline.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"verdict\": \"PASS\",\n  \"errors\": [],\n  \"task_count\": 1\n}\n"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-B",
+        "scripts/validate_tasks.py",
+        "--tasks",
+        "docs/task-contracts/simulated-local-pipeline.json",
+        "--output",
+        "docs/validation-reports/simulated-local-pipeline-task-contract-validation.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"agent\": \"task-contract-validation-agent\",\n  \"intent_id\": \"simulated-local-pipeline\",\n  \"verdict\": \"PASS\",\n  \"schema_validation\": {\n    \"status\": \"PASS\",\n    \"schema\": \"schemas/task-contracts.schema.json\",\n    \"errors\": []\n  },\n  \"epic_checks\": [\n    {\n      \"epic_id\": \"PIPE-EPIC-001\",\n      \"status\": \"PASS\"\n    }\n  ],\n  \"test_expectation_checks\": [\n    {\n      \"task_id\": \"PIPE-001\",\n      \"status\": \"PASS\",\n      \"highest_required_tier\": \"local_e2e\"\n    }\n  ],\n  \"dependency_checks\": [],\n  \"findings\": [],\n  \"model_routing\": {\n    \"alias\": \"validation_reasoning\",\n    \"selected_model\": \"operator-or-ide-selected\"\n  },\n  \"validated_at\": \"2026-07-12T11:44:49.194826+00:00\"\n}\n"
+    }
+  ],
+  "created_at": "2026-07-12T11:44:49.456522+00:00",
+  "intent_id": "simulated-local-pipeline",
+  "scenario": "simulated_pipeline_planning",
+  "schema_version": "1.0",
+  "verdict": "PASS"
+}

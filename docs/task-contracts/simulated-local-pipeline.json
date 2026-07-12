@@ -1,0 +1,120 @@
+{
+  "epics": [
+    {
+      "epic_id": "PIPE-EPIC-001",
+      "goal": "Prove the source-to-output pipeline locally with lineage and rerun safety.",
+      "name": "Local pipeline foundation",
+      "risk_level": "medium",
+      "sequencing_rationale": "Start with the smallest local vertical slice before adding external integrations."
+    }
+  ],
+  "intent_id": "simulated-local-pipeline",
+  "schema_version": "1.0",
+  "tasks": [
+    {
+      "acceptance_criteria": [
+        "Output records include source_file and source_row.",
+        "Malformed rows are rejected with reason codes.",
+        "Rerun does not duplicate output."
+      ],
+      "allowed_paths": [
+        "src/pipeline/**",
+        "tests/**"
+      ],
+      "behavior": "Read fixture rows, validate them, write output and rejection records with lineage.",
+      "dependencies": [],
+      "epic_id": "PIPE-EPIC-001",
+      "forbidden_paths": [
+        "docs/intents/**",
+        "docs/expectations/**",
+        "docs/task-contracts/**",
+        ".env"
+      ],
+      "negative_cases": [
+        "Malformed row is silently dropped."
+      ],
+      "non_goals": [
+        "No Azure or Databricks execution"
+      ],
+      "objective": "Implement one local source-to-output pipeline slice",
+      "required_reviewers": [
+        "test-agent",
+        "principal-engineer-agent"
+      ],
+      "risk_level": "medium",
+      "scope": [
+        "src/pipeline/**",
+        "tests/**"
+      ],
+      "stop_conditions": [
+        "Need to mutate cloud resources"
+      ],
+      "task_id": "PIPE-001",
+      "test_expectations": {
+        "cloud_e2e": {
+          "evidence_required": [],
+          "not_required_reason": "Cloud verification is outside build-auto.",
+          "required": false,
+          "what_to_test": []
+        },
+        "coverage_map": [
+          {
+            "criterion": "Output records include source_file and source_row.",
+            "tiers": [
+              "unit",
+              "integration",
+              "local_e2e"
+            ]
+          }
+        ],
+        "highest_required_tier": "local_e2e",
+        "integration": {
+          "evidence_required": [
+            "integration test output"
+          ],
+          "required": true,
+          "what_to_test": [
+            "fixture file read/write boundary"
+          ]
+        },
+        "local_e2e": {
+          "evidence_required": [
+            "local e2e command output"
+          ],
+          "required": true,
+          "what_to_test": [
+            "fixture source to validated output and rerun count check"
+          ]
+        },
+        "tier_rationale": "Pipeline task touches parsing, persistence, and full local fixture flow.",
+        "unit": {
+          "evidence_required": [
+            "focused unit test output"
+          ],
+          "required": true,
+          "what_to_test": [
+            "parser validation",
+            "lineage key construction"
+          ]
+        }
+      },
+      "verification": {
+        "commands": [
+          [
+            "python",
+            "-B",
+            "-m",
+            "pytest",
+            "tests",
+            "-q"
+          ]
+        ],
+        "test_tiers": [
+          "unit",
+          "integration",
+          "local_e2e"
+        ]
+      }
+    }
+  ]
+}

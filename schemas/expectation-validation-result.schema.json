@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "const": "expectation-validation-agent"
+    },
+    "findings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "required_change": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "MAJOR",
+              "BLOCKER"
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "required_change"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "model_routing": {
+      "type": "object"
+    },
+    "schema_validation": {
+      "additionalProperties": false,
+      "properties": {
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "schema": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "schema"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "semantic_checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "check": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "WARN"
+            ]
+          }
+        },
+        "required": [
+          "check",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "validated_at": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CHANGES_REQUIRED",
+        "BLOCKED_BY_AMBIGUITY",
+        "BLOCKED_BY_MISSING_CONTEXT"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "agent",
+    "intent_id",
+    "verdict",
+    "schema_validation",
+    "semantic_checks",
+    "findings",
+    "model_routing"
+  ],
+  "title": "Expectation Validation Result",
+  "type": "object"
+}

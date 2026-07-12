@@ -1,45 +1,167 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Expectations",
-  "type": "object",
-  "required": [
-    "intent_id",
-    "success_scenarios",
-    "failure_scenarios",
-    "acceptance_criteria"
-  ],
+  "additionalProperties": true,
   "properties": {
-    "intent_id": {
-      "type": "string"
-    },
-    "success_scenarios": {
-      "type": "array",
+    "acceptance_criteria": {
       "items": {
+        "minLength": 1,
         "type": "string"
-      }
+      },
+      "minItems": 1,
+      "type": "array"
     },
     "failure_scenarios": {
-      "type": "array",
       "items": {
+        "minLength": 1,
         "type": "string"
-      }
+      },
+      "minItems": 1,
+      "type": "array"
     },
-    "acceptance_criteria": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "intent_id": {
+      "minLength": 1,
+      "type": "string"
     },
-    "validation_strategy": {
-      "type": "array",
+    "negative_cases": {
       "items": {
         "type": "string"
-      }
+      },
+      "type": "array"
+    },
+    "private_eval_boundary": {
+      "type": "object"
+    },
+    "required_testing_tiers": {
+      "additionalProperties": false,
+      "properties": {
+        "cloud_e2e": {
+          "additionalProperties": false,
+          "properties": {
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "required",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "integration": {
+          "additionalProperties": false,
+          "properties": {
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "required",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "local_e2e": {
+          "additionalProperties": false,
+          "properties": {
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "required",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "unit": {
+          "additionalProperties": false,
+          "properties": {
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "required",
+            "reason"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "unit",
+        "integration",
+        "local_e2e",
+        "cloud_e2e"
+      ],
+      "type": "object"
+    },
+    "review_requirements": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "source_context_id": {
+      "type": "string"
+    },
+    "stop_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "success_scenarios": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
     },
     "testing_expectations_matrix": {
-      "type": "array",
       "items": {
-        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "behavior_or_risk": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "cloud_e2e": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "integration": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "local_e2e": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "unit": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
         "required": [
           "behavior_or_risk",
           "unit",
@@ -47,44 +169,30 @@
           "local_e2e",
           "cloud_e2e"
         ],
-        "properties": {
-          "behavior_or_risk": {
-            "type": "string"
-          },
-          "unit": {
-            "type": "string"
-          },
-          "integration": {
-            "type": "string"
-          },
-          "local_e2e": {
-            "type": "string"
-          },
-          "cloud_e2e": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": true
-      }
-    },
-    "required_testing_tiers": {
-      "type": "object",
-      "properties": {
-        "unit": {
-          "type": "object"
-        },
-        "integration": {
-          "type": "object"
-        },
-        "local_e2e": {
-          "type": "object"
-        },
-        "cloud_e2e": {
-          "type": "object"
-        }
+        "type": "object"
       },
-      "additionalProperties": true
+      "minItems": 1,
+      "type": "array"
+    },
+    "validation_strategy": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
     }
   },
-  "additionalProperties": true
+  "required": [
+    "schema_version",
+    "intent_id",
+    "success_scenarios",
+    "failure_scenarios",
+    "acceptance_criteria",
+    "validation_strategy",
+    "testing_expectations_matrix",
+    "required_testing_tiers"
+  ],
+  "title": "IDSD Expectations",
+  "type": "object"
 }

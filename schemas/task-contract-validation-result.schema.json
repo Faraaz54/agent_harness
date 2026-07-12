@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "const": "task-contract-validation-agent"
+    },
+    "dependency_checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "epic_checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "model_routing": {
+      "type": "object"
+    },
+    "schema_validation": {
+      "type": "object"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "test_expectation_checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "validated_at": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CHANGES_REQUIRED",
+        "BLOCKED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "agent",
+    "intent_id",
+    "verdict",
+    "schema_validation",
+    "epic_checks",
+    "test_expectation_checks",
+    "dependency_checks",
+    "findings",
+    "model_routing"
+  ],
+  "title": "Task Contract Validation Result",
+  "type": "object"
+}

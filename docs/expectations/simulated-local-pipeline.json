@@ -1,0 +1,64 @@
+{
+  "acceptance_criteria": [
+    "Output records include source_file and source_row.",
+    "Rerunning the fixture does not duplicate output."
+  ],
+  "failure_scenarios": [
+    "An invalid row is silently dropped instead of rejected."
+  ],
+  "intent_id": "simulated-local-pipeline",
+  "negative_cases": [
+    "Malformed rows are classified as rejected."
+  ],
+  "required_testing_tiers": {
+    "cloud_e2e": {
+      "reason": "Cloud verification belongs to goal-auto or explicit environment authority.",
+      "required": false
+    },
+    "integration": {
+      "reason": "Filesystem/persistence boundary is touched.",
+      "required": true
+    },
+    "local_e2e": {
+      "reason": "Pipeline behaviour must be proven end to end locally.",
+      "required": true
+    },
+    "unit": {
+      "reason": "Parser and key logic are isolated.",
+      "required": true
+    }
+  },
+  "review_requirements": [
+    "test-agent",
+    "principal-engineer-agent"
+  ],
+  "schema_version": "1.0",
+  "source_context_id": "simulated-local-pipeline",
+  "stop_conditions": [
+    "Cloud execution is required."
+  ],
+  "success_scenarios": [
+    "A fixture input row becomes a validated output record with source lineage."
+  ],
+  "testing_expectations_matrix": [
+    {
+      "behavior_or_risk": "Parse fixture rows and preserve lineage",
+      "cloud_e2e": "Not required: build-auto has no cloud authority.",
+      "integration": "Required: fixture file read/write boundary.",
+      "local_e2e": "Required: fixture source to validated output.",
+      "unit": "Required: parser and lineage key tests."
+    },
+    {
+      "behavior_or_risk": "Idempotent rerun",
+      "cloud_e2e": "Not required: reserved for goal loop.",
+      "integration": "Required: persisted output duplicate prevention.",
+      "local_e2e": "Required: run fixture twice and compare counts.",
+      "unit": "Required: key/hash logic."
+    }
+  ],
+  "validation_strategy": [
+    "Unit parser tests.",
+    "Integration file boundary test.",
+    "Local E2E fixture run."
+  ]
+}

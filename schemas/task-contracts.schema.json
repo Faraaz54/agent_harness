@@ -1,85 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Task Contracts",
-  "type": "object",
-  "required": [
-    "schema_version",
-    "intent_id",
-    "tasks"
-  ],
+  "additionalProperties": true,
   "properties": {
-    "schema_version": {
-      "type": "string"
-    },
-    "intent_id": {
-      "type": "string"
-    },
-    "tasks": {
-      "type": "array",
+    "epics": {
       "items": {
-        "type": "object",
-        "required": [
-          "task_id",
-          "objective",
-          "behavior",
-          "scope",
-          "acceptance_criteria",
-          "verification",
-          "required_reviewers",
-          "risk_level",
-          "test_expectations"
-        ],
+        "additionalProperties": true,
         "properties": {
-          "task_id": {
-            "type": "string"
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           },
           "epic_id": {
+            "minLength": 1,
             "type": "string"
           },
-          "objective": {
+          "goal": {
+            "minLength": 1,
             "type": "string"
           },
-          "behavior": {
+          "name": {
+            "minLength": 1,
             "type": "string"
-          },
-          "scope": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "non_goals": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "acceptance_criteria": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "negative_cases": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "verification": {
-            "type": "object"
-          },
-          "required_reviewers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "risk_level": {
             "enum": [
@@ -89,17 +32,160 @@
               "critical"
             ]
           },
+          "sequencing_rationale": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "epic_id",
+          "name",
+          "goal",
+          "sequencing_rationale"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "tasks": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "acceptance_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowed_paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "behavior": {
+            "type": "string"
+          },
+          "dependencies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "epic_id": {
+            "type": "string"
+          },
+          "forbidden_paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "negative_cases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "non_goals": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "objective": {
+            "type": "string"
+          },
+          "required_reviewers": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "risk_level": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "scope": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "task_id": {
+            "type": "string"
+          },
           "test_expectations": {
-            "type": "object",
-            "required": [
-              "highest_required_tier",
-              "tier_rationale",
-              "unit",
-              "integration",
-              "local_e2e",
-              "cloud_e2e"
-            ],
+            "additionalProperties": true,
             "properties": {
+              "cloud_e2e": {
+                "additionalProperties": true,
+                "properties": {
+                  "evidence_required": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "not_required_reason": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "what_to_test": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "required",
+                  "what_to_test",
+                  "evidence_required"
+                ],
+                "type": "object"
+              },
+              "coverage_map": {
+                "items": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "criterion": {
+                      "type": "string"
+                    },
+                    "tiers": {
+                      "items": {
+                        "enum": [
+                          "unit",
+                          "integration",
+                          "local_e2e",
+                          "cloud_e2e"
+                        ]
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "criterion",
+                    "tiers"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
               "highest_required_tier": {
                 "enum": [
                   "unit",
@@ -108,159 +194,134 @@
                   "cloud_e2e"
                 ]
               },
+              "integration": {
+                "additionalProperties": true,
+                "properties": {
+                  "evidence_required": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "not_required_reason": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "what_to_test": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "required",
+                  "what_to_test",
+                  "evidence_required"
+                ],
+                "type": "object"
+              },
+              "local_e2e": {
+                "additionalProperties": true,
+                "properties": {
+                  "evidence_required": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "not_required_reason": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "what_to_test": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "required",
+                  "what_to_test",
+                  "evidence_required"
+                ],
+                "type": "object"
+              },
               "tier_rationale": {
                 "type": "string"
               },
               "unit": {
-                "type": "object",
-                "required": [
-                  "required",
-                  "what_to_test",
-                  "evidence_required"
-                ],
+                "additionalProperties": true,
                 "properties": {
-                  "required": {
-                    "type": "boolean"
-                  },
-                  "what_to_test": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "evidence_required": {
-                    "type": "array",
                     "items": {
-                      "type": "string"
-                    }
-                  },
-                  "not_required_reason": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
-              },
-              "integration": {
-                "type": "object",
-                "required": [
-                  "required",
-                  "what_to_test",
-                  "evidence_required"
-                ],
-                "properties": {
-                  "required": {
-                    "type": "boolean"
-                  },
-                  "what_to_test": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "evidence_required": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "not_required_reason": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
-              },
-              "local_e2e": {
-                "type": "object",
-                "required": [
-                  "required",
-                  "what_to_test",
-                  "evidence_required"
-                ],
-                "properties": {
-                  "required": {
-                    "type": "boolean"
-                  },
-                  "what_to_test": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "evidence_required": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "not_required_reason": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
-              },
-              "cloud_e2e": {
-                "type": "object",
-                "required": [
-                  "required",
-                  "what_to_test",
-                  "evidence_required"
-                ],
-                "properties": {
-                  "required": {
-                    "type": "boolean"
-                  },
-                  "what_to_test": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "evidence_required": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "not_required_reason": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
-              },
-              "coverage_map": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": [
-                    "criterion",
-                    "tiers"
-                  ],
-                  "properties": {
-                    "criterion": {
                       "type": "string"
                     },
-                    "tiers": {
-                      "type": "array",
-                      "items": {
-                        "enum": [
-                          "unit",
-                          "integration",
-                          "local_e2e",
-                          "cloud_e2e"
-                        ]
-                      }
-                    }
+                    "type": "array"
                   },
-                  "additionalProperties": true
-                }
+                  "not_required_reason": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "what_to_test": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "required",
+                  "what_to_test",
+                  "evidence_required"
+                ],
+                "type": "object"
               }
             },
-            "additionalProperties": true
+            "required": [
+              "highest_required_tier",
+              "tier_rationale",
+              "unit",
+              "integration",
+              "local_e2e",
+              "cloud_e2e"
+            ],
+            "type": "object"
+          },
+          "verification": {
+            "type": "object"
           }
         },
-        "additionalProperties": true
-      }
+        "required": [
+          "task_id",
+          "epic_id",
+          "objective",
+          "behavior",
+          "scope",
+          "acceptance_criteria",
+          "verification",
+          "required_reviewers",
+          "risk_level",
+          "test_expectations"
+        ],
+        "type": "object"
+      },
+      "type": "array"
     }
   },
-  "additionalProperties": true
+  "required": [
+    "schema_version",
+    "intent_id",
+    "epics",
+    "tasks"
+  ],
+  "title": "Task Contracts",
+  "type": "object"
 }

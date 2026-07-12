@@ -1,0 +1,31 @@
+{
+  "agent": "task-contract-validation-agent",
+  "dependency_checks": [],
+  "epic_checks": [
+    {
+      "epic_id": "PIPE-EPIC-001",
+      "status": "PASS"
+    }
+  ],
+  "findings": [],
+  "intent_id": "simulated-local-pipeline",
+  "model_routing": {
+    "alias": "validation_reasoning",
+    "selected_model": "operator-or-ide-selected"
+  },
+  "schema_validation": {
+    "errors": [],
+    "schema": "schemas/task-contracts.schema.json",
+    "status": "PASS"
+  },
+  "schema_version": "1.0",
+  "test_expectation_checks": [
+    {
+      "highest_required_tier": "local_e2e",
+      "status": "PASS",
+      "task_id": "PIPE-001"
+    }
+  ],
+  "validated_at": "2026-07-12T11:44:49.194826+00:00",
+  "verdict": "PASS"
+}

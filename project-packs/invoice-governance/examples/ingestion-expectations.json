@@ -1,58 +1,60 @@
 {
-  "intent_id": "local-contractor-ingestion-pipeline",
-  "success_scenarios": [
-    "Valid SAP work-order rows are loaded into bronze and normalized into silver with source lineage.",
-    "Duplicate reruns do not duplicate canonical silver records.",
-    "Invalid source rows are rejected with reason codes and source lineage."
-  ],
-  "failure_scenarios": [
-    "A required source file type is missing and the run reports success.",
-    "A silver record lacks source lineage.",
-    "An ambiguous vendor or worker attribution is silently accepted."
-  ],
   "acceptance_criteria": [
     "Bronze rows retain source file and source row identifiers.",
     "Silver rows retain source batch and bronze row identifiers.",
     "Rejected rows retain reason code and source lineage.",
     "The configured local verification command passes."
   ],
-  "validation_strategy": [
-    "Focused parser/unit tests.",
-    "Local integration run against fixture source files.",
-    "Lineage and idempotency validation queries."
+  "failure_scenarios": [
+    "A required source file type is missing and the run reports success.",
+    "A silver record lacks source lineage.",
+    "An ambiguous vendor or worker attribution is silently accepted."
+  ],
+  "intent_id": "local-contractor-ingestion-pipeline",
+  "required_testing_tiers": {
+    "cloud_e2e": {
+      "reason": "Cloud verification belongs to goal-auto or explicit environment authority.",
+      "required": false
+    },
+    "integration": {
+      "reason": "The intent writes to local persistence boundaries and must prove schema/database behaviour.",
+      "required": true
+    },
+    "local_e2e": {
+      "reason": "The intent is a pipeline flow from source fixture to bronze/silver/rejection outputs.",
+      "required": true
+    },
+    "unit": {
+      "reason": "Parsing, validation, lineage-key, and idempotency logic are isolated enough for focused tests.",
+      "required": true
+    }
+  },
+  "schema_version": "1.0",
+  "source_context_id": "local-contractor-ingestion-pipeline",
+  "success_scenarios": [
+    "Valid SAP work-order rows are loaded into bronze and normalized into silver with source lineage.",
+    "Duplicate reruns do not duplicate canonical silver records.",
+    "Invalid source rows are rejected with reason codes and source lineage."
   ],
   "testing_expectations_matrix": [
     {
       "behavior_or_risk": "Parse SAP work-order CSV rows and classify malformed rows",
-      "unit": "Required: parser, required-column, type/nullability, and rejection reason tests.",
+      "cloud_e2e": "Not required for build-auto; reserved for goal-auto or explicit Azure/Databricks environment authority.",
       "integration": "Required when source files are read from fixture directories and persisted to bronze/rejections.",
       "local_e2e": "Required before closure for ingestion pipeline intent: fixture landing directory to validated outputs.",
-      "cloud_e2e": "Not required for build-auto; reserved for goal-auto or explicit Azure/Databricks environment authority."
+      "unit": "Required: parser, required-column, type/nullability, and rejection reason tests."
     },
     {
       "behavior_or_risk": "Preserve bronze-to-silver lineage and idempotent reruns",
-      "unit": "Required: lineage key/hash and canonical key tests.",
+      "cloud_e2e": "Not required unless remote Databricks/Azure job verification is explicitly authorised.",
       "integration": "Required: local database insert/transform queries prove lineage joins and duplicate prevention.",
       "local_e2e": "Required: rerun same fixture and verify no duplicate canonical rows plus retained lineage.",
-      "cloud_e2e": "Not required unless remote Databricks/Azure job verification is explicitly authorised."
+      "unit": "Required: lineage key/hash and canonical key tests."
     }
   ],
-  "required_testing_tiers": {
-    "unit": {
-      "required": true,
-      "reason": "Parsing, validation, lineage-key, and idempotency logic are isolated enough for focused tests."
-    },
-    "integration": {
-      "required": true,
-      "reason": "The intent writes to local persistence boundaries and must prove schema/database behaviour."
-    },
-    "local_e2e": {
-      "required": true,
-      "reason": "The intent is a pipeline flow from source fixture to bronze/silver/rejection outputs."
-    },
-    "cloud_e2e": {
-      "required": false,
-      "reason": "Cloud verification belongs to goal-auto or explicit environment authority."
-    }
-  }
+  "validation_strategy": [
+    "Focused parser/unit tests.",
+    "Local integration run against fixture source files.",
+    "Lineage and idempotency validation queries."
+  ]
 }

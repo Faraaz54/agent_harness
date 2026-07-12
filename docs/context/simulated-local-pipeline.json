@@ -1,0 +1,13 @@
+{
+  "available_tools": [
+    "pytest"
+  ],
+  "intent_id": "simulated-local-pipeline",
+  "project_pack": {
+    "active": "generic-python"
+  },
+  "runtime": {
+    "language": "python"
+  },
+  "schema_version": "1.0"
+}

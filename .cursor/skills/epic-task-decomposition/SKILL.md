@@ -1,20 +1,40 @@
 ---
 name: epic-task-decomposition
-description: Converts approved IDSD artifacts into dependency-aware vertical-slice task contracts with explicit testing hierarchy requirements.
+description: Converts approved IDSD artifacts into epic-organized, dependency-aware vertical-slice task contracts with explicit testing hierarchy requirements.
 ---
 
-# Task Decomposition
+# Epic Task Decomposition
+
+Do not produce a flat list of unrelated tasks. First create epics, then tasks inside epics.
+
+## Epic requirements
+
+Each epic must include:
+
+- `epic_id`;
+- `name`;
+- `goal`;
+- `sequencing_rationale`;
+- dependencies on earlier epics, if any;
+- risk level.
+
+Epics group coherent outcomes. They are not layers like "models", "database", "tests". A pipeline epic might be "Source-to-bronze ingestion foundation" or "Bronze-to-silver normalization and lineage".
+
+## Task requirements
 
 Tasks should deliver vertical behaviour, not architectural layers. Each task must include:
 
+- `task_id`;
+- `epic_id` referencing a declared epic;
 - objective;
 - behavior;
 - scope;
+- allowed and forbidden paths where known;
 - non-goals;
 - dependencies;
 - acceptance criteria;
 - negative cases;
-- verification commands;
+- verification commands or evidence paths;
 - required reviewers;
 - risk level;
 - stop conditions;
@@ -42,6 +62,10 @@ Also include:
 - `tier_rationale`;
 - `coverage_map`, mapping acceptance criteria and negative cases to the test tier that proves them.
 
-## Pipeline default
+After generating contracts, run:
 
-For data pipelines, ingestion, ETL/ELT, bronze/silver/gold transformations, orchestration entrypoints, and stateful processing, local E2E evidence is normally required before session closure. Cloud E2E is not run by `/build-auto` unless explicit environment authority exists.
+```bash
+python -B scripts/schema_validator.py --kind task-contracts --path docs/task-contracts/<intent-id>.json
+python -B scripts/test_strategy.py validate-contracts --contracts docs/task-contracts/<intent-id>.json
+python -B scripts/validate_tasks.py --tasks docs/task-contracts/<intent-id>.json --output docs/validation-reports/<intent-id>-task-contract-validation.json
+```

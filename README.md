@@ -60,3 +60,8 @@ See:
 - `schemas/domain-review-result.schema.json`
 - `schemas/task-validation.schema.json`
 - `scripts/agent_result_contracts.py`
+
+
+## v0.6.2 planning enforcement
+
+Adds schema-enforced expectation derivation/validation, epic-based task decomposition, task-contract validation, and a simulated pipeline planning workflow.

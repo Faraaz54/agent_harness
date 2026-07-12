@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "const": "expectation-derivation-agent"
+    },
+    "artifacts": {
+      "additionalProperties": false,
+      "properties": {
+        "expectations_json": {
+          "type": "string"
+        },
+        "expectations_md": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "expectations_json",
+        "expectations_md"
+      ],
+      "type": "object"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "model_routing": {
+      "type": "object"
+    },
+    "open_questions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "testing_matrix_status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "BLOCKED_BY_AMBIGUITY",
+        "BLOCKED_BY_MISSING_CONTEXT"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "agent",
+    "intent_id",
+    "verdict",
+    "artifacts",
+    "testing_matrix_status",
+    "assumptions",
+    "open_questions",
+    "model_routing"
+  ],
+  "title": "Expectation Derivation Result",
+  "type": "object"
+}
