@@ -14,3 +14,13 @@ Check:
 - errors are explicit;
 - tests cover acceptance and negative cases;
 - type boundaries are clear where useful.
+
+## Required structured output
+
+The domain reviewer must write `docs/reviews/<task-id>/domain-review.json` and the file must validate against:
+
+```text
+project-packs/generic-python/schemas/domain-review-result.schema.json
+```
+
+Never return prose-only review. Findings must be structured with severity, evidence, required outcome and completion impact.

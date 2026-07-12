@@ -9,6 +9,7 @@ SCHEMA_BY_KIND={
  'implementation-result':'schemas/implementation-result.schema.json',
  'review-result':'schemas/review-result.schema.json',
  'task-validation':'schemas/task-validation.schema.json',
+ 'domain-review-result':'schemas/domain-review-result.schema.json',
  'orchestrator-action':'schemas/orchestrator-action.schema.json',
  'expectations':'schemas/expectations.schema.json',
  'task-contracts':'schemas/task-contracts.schema.json',

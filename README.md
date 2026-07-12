@@ -47,3 +47,16 @@ Validate or activate:
 python -B scripts/project_pack.py validate --pack project-packs/invoice-governance
 python -B scripts/project_pack.py activate --name invoice-governance
 ```
+
+## v0.6.1 structured agent outputs
+
+v0.6.1 requires implementation, review, domain review and validation agents to emit structured JSON. These files are validated before orchestrator state transitions.
+
+See:
+
+- `docs/harness/agent-output-contracts.md`
+- `schemas/implementation-result.schema.json`
+- `schemas/review-result.schema.json`
+- `schemas/domain-review-result.schema.json`
+- `schemas/task-validation.schema.json`
+- `scripts/agent_result_contracts.py`

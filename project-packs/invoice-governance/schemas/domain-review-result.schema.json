@@ -1,1 +1,229 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Invoice Domain Review Result","type":"object","required":["review_type","task_id","verdict","invariants","findings"],"properties":{"review_type":{"const":"invoice-domain"},"task_id":{"type":"string"},"verdict":{"enum":["PASS","CHANGES_REQUIRED","BLOCKED_BY_AMBIGUITY","BLOCKED_BY_MISSING_CONTEXT"]},"invariants":{"type":"array"},"findings":{"type":"array"}},"additionalProperties":true}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Domain Review Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "review_type",
+    "reviewer",
+    "project_pack",
+    "domain_skill",
+    "task_id",
+    "attempt",
+    "verdict",
+    "domain_entities_reviewed",
+    "invariants",
+    "findings",
+    "repair_guidance",
+    "model_routing"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "review_type": {
+      "enum": [
+        "domain",
+        "invoice-domain",
+        "python-domain"
+      ]
+    },
+    "reviewer": {
+      "const": "domain-reviewer-agent"
+    },
+    "project_pack": {
+      "type": "string"
+    },
+    "domain_skill": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CHANGES_REQUIRED",
+        "BLOCKED",
+        "BLOCKED_BY_AMBIGUITY",
+        "BLOCKED_BY_MISSING_CONTEXT"
+      ]
+    },
+    "domain_entities_reviewed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_APPLICABLE",
+              "UNKNOWN"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "finding_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "problem",
+          "required_outcome",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "MINOR",
+              "MAJOR",
+              "CRITICAL",
+              "BLOCKER"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "required_outcome": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "string"
+          },
+          "suggested_test": {
+            "type": "string"
+          },
+          "repair_scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blocks_completion": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "repair_guidance": {
+      "type": "object",
+      "required": [
+        "allowed",
+        "scope",
+        "do_not_change"
+      ],
+      "properties": {
+        "allowed": {
+          "type": "boolean"
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "do_not_change": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "model_routing": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selected_model": {
+          "type": "string"
+        },
+        "reasoning_effort": {
+          "type": "string"
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

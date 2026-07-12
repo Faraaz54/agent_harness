@@ -58,22 +58,88 @@ Stop and report `BLOCKED` when:
 - existing code structure is unclear after reading exports/callers/tests;
 - success requires private validator checks that you are not allowed to see.
 
-## Output artifact
+## Required output artifact
 
-Write `docs/implementation-results/<task-id>-attempt-<n>.json` with:
+Write:
 
-- task_id;
-- attempt;
-- active skills;
-- files read before write;
-- files changed;
-- RED evidence or reason RED was not feasible;
-- GREEN evidence;
-- commands run;
-- assumptions;
-- residual concerns;
-- learning ledger path;
-- verdict: `IMPLEMENTED_AWAITING_REVIEW` or `BLOCKED`.
+```text
+./docs/implementation-results/<task-id>-attempt-<n>.json
+```
+
+The artifact must validate against:
+
+```text
+schemas/implementation-result.schema.json
+```
+
+Return only this JSON object in the artifact:
+
+```json
+{
+  "schema_version": "1.0",
+  "agent": "build-agent",
+  "task_id": "<task-id>",
+  "attempt": 1,
+  "verdict": "IMPLEMENTED_AWAITING_REVIEW",
+  "active_skills": [
+    "using-agent-skills",
+    "red-green-vertical-slice",
+    "simple-python-implementation",
+    "testing-patterns",
+    "test-hierarchy"
+  ],
+  "files_read_before_write": [
+    "<path read before editing>"
+  ],
+  "files_changed": [
+    "<path changed>"
+  ],
+  "red_evidence": {
+    "status": "FAILED_AS_EXPECTED",
+    "summary": "<why the RED failure was meaningful>",
+    "command": "<command or command array>",
+    "evidence_paths": [
+      "<optional evidence path>"
+    ],
+    "not_feasible_reason": "<required only when status is NOT_FEASIBLE>"
+  },
+  "green_evidence": {
+    "status": "PASS",
+    "summary": "<what passed after implementation>",
+    "evidence_paths": [
+      "<optional evidence path>"
+    ]
+  },
+  "commands_run": [
+    {
+      "command": "python -B -m pytest tests -q",
+      "status": "PASS",
+      "returncode": 0,
+      "summary": "<short output summary>",
+      "evidence_path": "<optional>"
+    }
+  ],
+  "assumptions": [
+    "<explicit assumption, or empty array>"
+  ],
+  "residual_concerns": [
+    "<remaining concern, or empty array>"
+  ],
+  "learning": {
+    "summary": "<what changed and why>",
+    "ledger_path": "<optional learning ledger path>",
+    "repair_memory_candidates": []
+  },
+  "model_routing": {
+    "alias": "execution_medium",
+    "selected_model": "<actual model selected>",
+    "fallback_used": false,
+    "notes": "<optional>"
+  }
+}
+```
+
+If implementation is blocked, set `verdict` to `BLOCKED`, keep arrays present, and explain the blocker in `residual_concerns`. Do not emit prose-only summaries.
 
 
 ## Model routing

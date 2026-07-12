@@ -45,20 +45,93 @@ Read:
 7. Verify project-pack public invariants required for this task are covered.
 8. Verify learning capture exists, but do not claim human mastery.
 
-## Output artifact
+## Required output artifact
 
-Write `docs/validation-results/<task-id>-validator.json` with:
+Write:
 
-- active skills;
-- artifact identity checks;
-- acceptance_criteria matrix;
-- negative_cases matrix;
-- invariant matrix;
-- unresolved findings;
-- missing evidence;
-- verdict: `PASS`, `REJECT`, or `BLOCKED`.
+```text
+./docs/validation-results/<task-id>-validator.json
+```
 
-Only `PASS` allows the orchestrator to mark the task passed.
+The artifact must validate against:
+
+```text
+schemas/task-validation.schema.json
+```
+
+Return only this JSON object in the artifact:
+
+```json
+{
+  "schema_version": "1.0",
+  "validator": "validator-agent",
+  "task_id": "<task-id>",
+  "attempt": 1,
+  "verdict": "PASS",
+  "artifact_identity_checks": [
+    {
+      "artifact": "implementation_result",
+      "status": "PASS",
+      "evidence": "<path and hash/status>"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "criterion": "<acceptance criterion>",
+      "status": "PASS",
+      "evidence": [
+        "<evidence ledger id, test output, review path, or file reference>"
+      ],
+      "finding_ids": []
+    }
+  ],
+  "negative_cases": [
+    {
+      "case": "<negative case>",
+      "status": "PASS",
+      "evidence": [
+        "<evidence or explicit not-applicable justification>"
+      ],
+      "finding_ids": []
+    }
+  ],
+  "invariant_matrix": [
+    {
+      "invariant": "<project or harness invariant>",
+      "status": "PASS",
+      "evidence": [
+        "<domain review, test, or script evidence>"
+      ],
+      "finding_ids": []
+    }
+  ],
+  "review_status": [
+    {
+      "reviewer": "test-agent",
+      "status": "PASS",
+      "path": "docs/reviews/<task-id>/test-agent.json"
+    },
+    {
+      "reviewer": "principal-engineer-agent",
+      "status": "APPROVE",
+      "path": "docs/reviews/<task-id>/principal-engineer-agent.json"
+    }
+  ],
+  "unresolved_findings": [],
+  "missing_evidence": [],
+  "evidence_ledger_entries": [
+    "<evidence-id-or-path>"
+  ],
+  "model_routing": {
+    "alias": "validation_reasoning",
+    "selected_model": "<actual model selected>",
+    "fallback_used": false,
+    "notes": "<optional>"
+  }
+}
+```
+
+Use `REJECT` when evidence is insufficient and repair is possible. Use `BLOCKED` when validation cannot proceed because required artifacts are missing or contradictory. Do not emit prose-only summaries.
 
 
 ## Model routing

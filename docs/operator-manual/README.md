@@ -229,3 +229,18 @@ Use `/teach-me` when you want the agent to quiz you and verify you can explain t
 - Do not accept implementation without schema-valid result files.
 - Do not commit without fresh postflight, scope guard and secret scan.
 - Do not treat teach-me closure as engineering closure.
+
+## Structured agent outputs
+
+Implementation, review, domain review and validation outputs are machine-consumed artifacts. They must be JSON and must validate before the orchestrator records a result.
+
+See: [`docs/harness/agent-output-contracts.md`](../harness/agent-output-contracts.md)
+
+Useful commands:
+
+```bash
+python -B scripts/agent_result_contracts.py validate --kind implementation --path docs/implementation-results/<task-id>-attempt-1.json --task-id <task-id> --agent build-agent
+python -B scripts/agent_result_contracts.py validate --kind review --path docs/reviews/<task-id>/test-agent.json --task-id <task-id> --agent test-agent
+python -B scripts/agent_result_contracts.py validate --kind domain-review --path docs/reviews/<task-id>/domain-review.json --task-id <task-id> --agent domain-reviewer-agent
+python -B scripts/agent_result_contracts.py validate --kind validation --path docs/validation-results/<task-id>-validator.json --task-id <task-id> --agent validator-agent
+```

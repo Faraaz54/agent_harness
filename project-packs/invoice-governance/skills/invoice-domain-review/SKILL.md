@@ -36,3 +36,29 @@ Determine whether the implementation preserves invoice-governance domain meaning
 - CHANGES_REQUIRED
 - BLOCKED_BY_AMBIGUITY
 - BLOCKED_BY_MISSING_CONTEXT
+
+## Required structured output
+
+The domain reviewer must write `docs/reviews/<task-id>/domain-review.json` and the file must validate against:
+
+```text
+project-packs/invoice-governance/schemas/domain-review-result.schema.json
+```
+
+The result must include:
+
+- `schema_version`
+- `review_type`
+- `reviewer`
+- `project_pack`
+- `domain_skill`
+- `task_id`
+- `attempt`
+- `verdict`
+- `domain_entities_reviewed`
+- `invariants`
+- `findings`
+- `repair_guidance`
+- `model_routing`
+
+Never return prose-only domain review. Findings must include severity, evidence, required outcome and whether they block completion.

@@ -1,1 +1,248 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Implementation Result","type":"object","required":["task_id","verdict","files_changed","verification"],"properties":{"task_id":{"type":"string"},"verdict":{"enum":["IMPLEMENTED","PASS","FAIL","BLOCKED"]},"files_changed":{"type":"array","items":{"type":"string"}},"verification":{"type":"object"},"notes":{"type":"string"}},"additionalProperties":true}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Implementation Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "agent",
+    "task_id",
+    "attempt",
+    "verdict",
+    "active_skills",
+    "files_read_before_write",
+    "files_changed",
+    "red_evidence",
+    "green_evidence",
+    "commands_run",
+    "assumptions",
+    "residual_concerns",
+    "learning",
+    "model_routing"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "agent": {
+      "const": "build-agent"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "verdict": {
+      "enum": [
+        "IMPLEMENTED_AWAITING_REVIEW",
+        "BLOCKED"
+      ]
+    },
+    "active_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_read_before_write": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "red_evidence": {
+      "type": "object",
+      "required": [
+        "status",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "FAILED_AS_EXPECTED",
+            "NOT_FEASIBLE",
+            "NOT_REQUIRED",
+            "BLOCKED"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "command": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_feasible_reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "green_evidence": {
+      "type": "object",
+      "required": [
+        "status",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "NOT_RUN"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "commands_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "command",
+          "status"
+        ],
+        "properties": {
+          "command": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "SKIPPED",
+              "NOT_RUN",
+              "BLOCKED"
+            ]
+          },
+          "returncode": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "evidence_path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "residual_concerns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "learning": {
+      "type": "object",
+      "required": [
+        "summary"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "ledger_path": {
+          "type": "string"
+        },
+        "repair_memory_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "model_routing": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selected_model": {
+          "type": "string"
+        },
+        "reasoning_effort": {
+          "type": "string"
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

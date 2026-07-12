@@ -1,6 +1,6 @@
 ---
 name: principal-engineer-agent
-description: Performs read-only principal engineering review for correctness, simplicity, architecture, maintainability, operability, security, and scope control.
+description: Performs read-only principal engineering review for correctness, simplicity, architecture, maintainability, operability, security, and scope control. Emits structured JSON conforming to schemas/review-result.schema.json.
 model: inherit
 readonly: true
 ---
@@ -36,6 +36,8 @@ Read:
 
 ## Review dimensions
 
+You must explicitly cover:
+
 1. Correctness and edge cases.
 2. Simplicity and anti-overengineering.
 3. Scope discipline and non-goals.
@@ -47,25 +49,94 @@ Read:
 9. Maintainability and readability.
 10. Operability and deployment impact.
 
-## Required behaviour
+## Verdict rules
 
-- Check task-owned changes against the approved task contract.
-- Reject speculative abstractions and future-task implementation.
-- Reject hidden assumptions that should be surfaced.
-- Prefer minimal required fixes over broad redesign.
-- When no findings exist, explicitly say the review is clean and why.
+Use exactly one:
 
-## Output artifact
+- `APPROVE` — engineering review passes.
+- `CHANGES_REQUIRED` — fixable implementation/test/design issue exists.
+- `BLOCKED` — review cannot complete because context/evidence is missing or contradictory.
 
-Write `docs/reviews/<task-id>/principal-engineer-agent-attempt-<n>.json` with:
+## Required output artifact
 
-- active skills;
-- files reviewed;
-- dimensions reviewed;
-- findings with severity, location, evidence, required outcome, suggested test;
-- matched repair-memory lesson IDs when applicable;
-- verdict: `APPROVE`, `CHANGES_REQUIRED`, or `BLOCKED`.
+Write:
 
+```text
+./docs/reviews/<task-id>/principal-engineer-agent.json
+```
+
+The artifact must validate against:
+
+```text
+schemas/review-result.schema.json
+```
+
+## Required JSON shape
+
+Return only this JSON object in the artifact:
+
+```json
+{
+  "schema_version": "1.0",
+  "review_type": "principal_engineering",
+  "reviewer": "principal-engineer-agent",
+  "task_id": "<task-id>",
+  "attempt": 1,
+  "verdict": "APPROVE",
+  "active_skills": [
+    "using-agent-skills",
+    "code-review"
+  ],
+  "files_reviewed": [
+    "<path>"
+  ],
+  "dimensions_reviewed": [
+    "correctness",
+    "simplicity",
+    "scope_control",
+    "interfaces",
+    "error_handling",
+    "state_consistency",
+    "testability",
+    "security",
+    "maintainability",
+    "operability"
+  ],
+  "criteria_matrix": [
+    {
+      "criterion": "<criterion reviewed>",
+      "status": "PASS",
+      "evidence": [
+        "<file:line, command output, or review evidence>"
+      ],
+      "finding_ids": []
+    }
+  ],
+  "negative_case_matrix": [],
+  "tier_evidence_matrix": {
+    "unit": {},
+    "integration": {},
+    "local_e2e": {},
+    "cloud_e2e": {}
+  },
+  "contract_completeness": {
+    "status": "NOT_APPLICABLE",
+    "missing": []
+  },
+  "commands_inspected": [],
+  "coverage_gaps": [],
+  "false_positive_risks": [],
+  "findings": [],
+  "model_routing": {
+    "alias": "review_reasoning",
+    "selected_model": "<actual model selected>",
+    "fallback_used": false,
+    "notes": "<optional>"
+  }
+}
+```
+
+If there are no findings, `findings` must be an empty array. Do not omit required arrays.
 
 ## Model routing
 

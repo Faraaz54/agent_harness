@@ -64,21 +64,44 @@ SCHEMA_BY_ACTION = {
     'IMPLEMENT_TASK': 'schemas/implementation-result.schema.json',
     'REPAIR_TASK': 'schemas/implementation-result.schema.json',
     'RUN_REVIEW': 'schemas/review-result.schema.json',
+    'RUN_DOMAIN_REVIEW': 'schemas/domain-review-result.schema.json',
     'RUN_VALIDATOR': 'schemas/task-validation.schema.json',
 }
 
-def validate_result_for_action(repo: Path, action_name: str, result_path: Path) -> None:
+def schema_for_action(repo: Path, action: dict) -> Path | None:
+    action_name = action.get('action')
+    if action_name == 'RUN_DOMAIN_REVIEW':
+        cfg = load_config(repo)
+        pack_name = cfg.get('project_pack', {}).get('active') or cfg.get('project_pack', {}).get('name')
+        if pack_name:
+            pack_schema = repo / 'project-packs' / pack_name / 'schemas' / 'domain-review-result.schema.json'
+            if pack_schema.exists():
+                return pack_schema
     schema = SCHEMA_BY_ACTION.get(action_name)
+    return repo / schema if schema else None
+
+def validate_result_for_action(repo: Path, action: dict, result_path: Path) -> dict:
+    schema = schema_for_action(repo, action)
     if schema:
-        validate_json_schema(result_path, repo / schema)
+        validate_json_schema(result_path, schema)
+    result = load_json(result_path)
+    expected_task_id = action.get('task_id')
+    if expected_task_id and result.get('task_id') != expected_task_id:
+        raise HarnessError(f"Result task_id {result.get('task_id')} does not match action task_id {expected_task_id}")
+    expected_agent = action.get('required_agent')
+    if expected_agent:
+        actual_agent = result.get('agent') or result.get('reviewer') or result.get('validator')
+        if actual_agent and actual_agent != expected_agent:
+            raise HarnessError(f"Result agent {actual_agent} does not match required agent {expected_agent}")
+    return result
 
 def record(repo: Path, action_id: str, result_path: Path):
-    manifest,state,features=load_all(repo); run_id=manifest['run_id']; action=action_by_id(repo,run_id,action_id); validate_result_for_action(repo, action['action'], result_path); result=load_json(result_path); fm=feature_map(features); tid=action.get('task_id')
+    manifest,state,features=load_all(repo); run_id=manifest['run_id']; action=action_by_id(repo,run_id,action_id); result=validate_result_for_action(repo, action, result_path); fm=feature_map(features); tid=action.get('task_id')
     verdict=str(result.get('verdict') or result.get('status') or '').upper()
     if tid and tid in fm:
         f=fm[tid]
         if action['action']=='IMPLEMENT_TASK':
-            if verdict in ['PASS','IMPLEMENTED']:
+            if verdict in ['PASS','IMPLEMENTED','IMPLEMENTED_AWAITING_REVIEW']:
                 f['status']='implemented'; f['implementation']['files_changed']=result.get('files_changed', f['implementation'].get('files_changed',[])); f['verification']=result.get('verification', f.get('verification',{}))
             else: f['status']='changes_requested'
         elif action['action']=='RUN_REVIEW':
