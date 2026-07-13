@@ -4,6 +4,7 @@ import argparse, json, sys
 from pathlib import Path
 sys.dont_write_bytecode=True
 from harnesslib import repository_root, load_json, write_json
+from project_context import discover as discover_context, validate_index as validate_context_index
 
 def validate_pack(path: Path) -> dict:
     manifest=path/'project-pack.json'
@@ -15,7 +16,11 @@ def validate_pack(path: Path) -> dict:
             if not obj.get(key): errors.append(f'missing {key}')
         for rel in obj.get('required_files',[]):
             if not (path/rel).exists(): errors.append(f'missing required file {rel}')
-    return {'verdict':'FAIL' if errors else 'PASS','pack':str(path),'errors':errors}
+    # v0.6.3: context/ is optional, but if present it must be UTF-8, supported, and indexable.
+    context_index = discover_context(path, repository_root())
+    context_errors = validate_context_index(context_index)
+    errors.extend(context_errors)
+    return {'verdict':'FAIL' if errors else 'PASS','pack':str(path),'errors':errors,'context_file_count':len(context_index.get('files', [])),'context_warnings':context_index.get('warnings', [])}
 
 def main():
     ap=argparse.ArgumentParser(); sub=ap.add_subparsers(dest='cmd', required=True)

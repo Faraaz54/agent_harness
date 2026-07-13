@@ -1,140 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Implementation Result",
-  "type": "object",
-  "required": [
-    "schema_version",
-    "agent",
-    "task_id",
-    "attempt",
-    "verdict",
-    "active_skills",
-    "files_read_before_write",
-    "files_changed",
-    "red_evidence",
-    "green_evidence",
-    "commands_run",
-    "assumptions",
-    "residual_concerns",
-    "learning",
-    "model_routing"
-  ],
+  "additionalProperties": false,
   "properties": {
-    "schema_version": {
-      "const": "1.0"
+    "active_skills": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "agent": {
       "const": "build-agent"
     },
-    "task_id": {
-      "type": "string"
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "attempt": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "verdict": {
-      "enum": [
-        "IMPLEMENTED_AWAITING_REVIEW",
-        "BLOCKED"
-      ]
-    },
-    "active_skills": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "files_read_before_write": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "files_changed": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "red_evidence": {
-      "type": "object",
-      "required": [
-        "status",
-        "summary"
-      ],
-      "properties": {
-        "status": {
-          "enum": [
-            "FAILED_AS_EXPECTED",
-            "NOT_FEASIBLE",
-            "NOT_REQUIRED",
-            "BLOCKED"
-          ]
-        },
-        "summary": {
-          "type": "string"
-        },
-        "command": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          ]
-        },
-        "evidence_paths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "not_feasible_reason": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false
-    },
-    "green_evidence": {
-      "type": "object",
-      "required": [
-        "status",
-        "summary"
-      ],
-      "properties": {
-        "status": {
-          "enum": [
-            "PASS",
-            "FAIL",
-            "BLOCKED",
-            "NOT_RUN"
-          ]
-        },
-        "summary": {
-          "type": "string"
-        },
-        "evidence_paths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "additionalProperties": false
+      "minimum": 1,
+      "type": "integer"
     },
     "commands_run": {
-      "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "command",
-          "status"
-        ],
+        "additionalProperties": false,
         "properties": {
           "command": {
             "oneOf": [
@@ -142,11 +31,20 @@
                 "type": "string"
               },
               {
-                "type": "array",
                 "items": {
                   "type": "string"
-                }
+                },
+                "type": "array"
               }
+            ]
+          },
+          "evidence_path": {
+            "type": "string"
+          },
+          "returncode": {
+            "type": [
+              "integer",
+              "null"
             ]
           },
           "status": {
@@ -158,57 +56,107 @@
               "BLOCKED"
             ]
           },
-          "returncode": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
           "summary": {
-            "type": "string"
-          },
-          "evidence_path": {
             "type": "string"
           }
         },
-        "additionalProperties": false
-      }
+        "required": [
+          "command",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
     },
-    "assumptions": {
-      "type": "array",
+    "context_files_used": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "context_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "used_for": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "context_id",
+          "path",
+          "used_for"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "files_changed": {
       "items": {
         "type": "string"
-      }
+      },
+      "type": "array"
     },
-    "residual_concerns": {
-      "type": "array",
+    "files_read_before_write": {
       "items": {
         "type": "string"
-      }
+      },
+      "type": "array"
     },
-    "learning": {
-      "type": "object",
-      "required": [
-        "summary"
-      ],
+    "green_evidence": {
+      "additionalProperties": false,
       "properties": {
+        "evidence_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "NOT_RUN"
+          ]
+        },
         "summary": {
           "type": "string"
-        },
+        }
+      },
+      "required": [
+        "status",
+        "summary"
+      ],
+      "type": "object"
+    },
+    "learning": {
+      "additionalProperties": false,
+      "properties": {
         "ledger_path": {
           "type": "string"
         },
         "repair_memory_candidates": {
-          "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "type": "array"
+        },
+        "summary": {
+          "type": "string"
         }
       },
-      "additionalProperties": false
+      "required": [
+        "summary"
+      ],
+      "type": "object"
     },
     "model_routing": {
-      "type": "object",
+      "additionalProperties": true,
       "properties": {
         "alias": {
           "type": [
@@ -216,11 +164,8 @@
             "null"
           ]
         },
-        "provider": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "fallback_used": {
+          "type": "boolean"
         },
         "model": {
           "type": [
@@ -228,21 +173,104 @@
             "null"
           ]
         },
-        "selected_model": {
+        "notes": {
           "type": "string"
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "reasoning_effort": {
           "type": "string"
         },
-        "fallback_used": {
-          "type": "boolean"
-        },
-        "notes": {
+        "selected_model": {
           "type": "string"
         }
       },
-      "additionalProperties": true
+      "type": "object"
+    },
+    "red_evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "evidence_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "not_feasible_reason": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "FAILED_AS_EXPECTED",
+            "NOT_FEASIBLE",
+            "NOT_REQUIRED",
+            "BLOCKED"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "summary"
+      ],
+      "type": "object"
+    },
+    "residual_concerns": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "IMPLEMENTED_AWAITING_REVIEW",
+        "BLOCKED"
+      ]
     }
   },
-  "additionalProperties": false
+  "required": [
+    "schema_version",
+    "agent",
+    "task_id",
+    "attempt",
+    "verdict",
+    "active_skills",
+    "context_files_used",
+    "files_read_before_write",
+    "files_changed",
+    "red_evidence",
+    "green_evidence",
+    "commands_run",
+    "assumptions",
+    "residual_concerns",
+    "learning",
+    "model_routing"
+  ],
+  "title": "Implementation Result",
+  "type": "object"
 }

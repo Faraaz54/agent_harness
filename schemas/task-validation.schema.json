@@ -1,54 +1,52 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Task Validation Result",
-  "type": "object",
-  "required": [
-    "schema_version",
-    "validator",
-    "task_id",
-    "attempt",
-    "verdict",
-    "artifact_identity_checks",
-    "acceptance_criteria",
-    "negative_cases",
-    "invariant_matrix",
-    "review_status",
-    "unresolved_findings",
-    "missing_evidence",
-    "evidence_ledger_entries",
-    "model_routing"
-  ],
+  "additionalProperties": false,
   "properties": {
-    "schema_version": {
-      "const": "1.0"
-    },
-    "validator": {
-      "const": "validator-agent"
-    },
-    "task_id": {
-      "type": "string"
-    },
-    "attempt": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "verdict": {
-      "enum": [
-        "PASS",
-        "REJECT",
-        "BLOCKED"
-      ]
+    "acceptance_criteria": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "criterion": {
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "finding_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "MISSING",
+              "NOT_APPLICABLE"
+            ]
+          }
+        },
+        "required": [
+          "criterion",
+          "status",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "type": "array"
     },
     "artifact_identity_checks": {
-      "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "artifact",
-          "status"
-        ],
+        "additionalProperties": false,
         "properties": {
           "artifact": {
+            "type": "string"
+          },
+          "evidence": {
             "type": "string"
           },
           "status": {
@@ -58,26 +56,32 @@
               "MISSING",
               "STALE"
             ]
-          },
-          "evidence": {
-            "type": "string"
           }
         },
-        "additionalProperties": false
-      }
-    },
-    "acceptance_criteria": {
-      "type": "array",
-      "items": {
-        "type": "object",
         "required": [
-          "criterion",
-          "status",
-          "evidence"
+          "artifact",
+          "status"
         ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "attempt": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "context_coverage": {
+      "items": {
+        "additionalProperties": false,
         "properties": {
-          "criterion": {
+          "context_id": {
             "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           },
           "status": {
             "enum": [
@@ -86,70 +90,39 @@
               "MISSING",
               "NOT_APPLICABLE"
             ]
-          },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "finding_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         },
-        "additionalProperties": false
-      }
-    },
-    "negative_cases": {
-      "type": "array",
-      "items": {
-        "type": "object",
         "required": [
-          "case",
+          "context_id",
           "status",
           "evidence"
         ],
-        "properties": {
-          "case": {
-            "type": "string"
-          },
-          "status": {
-            "enum": [
-              "PASS",
-              "FAIL",
-              "MISSING",
-              "NOT_APPLICABLE"
-            ]
-          },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "finding_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "additionalProperties": false
-      }
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "evidence_ledger_entries": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "invariant_matrix": {
-      "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "invariant",
-          "status",
-          "evidence"
-        ],
+        "additionalProperties": false,
         "properties": {
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "finding_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "invariant": {
             "type": "string"
           },
@@ -160,33 +133,103 @@
               "MISSING",
               "NOT_APPLICABLE"
             ]
-          },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "finding_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         },
-        "additionalProperties": false
-      }
+        "required": [
+          "invariant",
+          "status",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "missing_evidence": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "model_routing": {
+      "additionalProperties": true,
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasoning_effort": {
+          "type": "string"
+        },
+        "selected_model": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "negative_cases": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "case": {
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "finding_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "MISSING",
+              "NOT_APPLICABLE"
+            ]
+          }
+        },
+        "required": [
+          "case",
+          "status",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "type": "array"
     },
     "review_status": {
-      "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "reviewer",
-          "status",
-          "path"
-        ],
+        "additionalProperties": false,
         "properties": {
+          "path": {
+            "type": "string"
+          },
           "reviewer": {
             "type": "string"
           },
@@ -198,28 +241,52 @@
               "BLOCKED",
               "MISSING"
             ]
-          },
-          "path": {
-            "type": "string"
           }
         },
-        "additionalProperties": false
-      }
+        "required": [
+          "reviewer",
+          "status",
+          "path"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
     },
     "unresolved_findings": {
-      "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "severity",
-          "title",
-          "problem",
-          "required_outcome",
-          "evidence"
-        ],
+        "additionalProperties": false,
         "properties": {
+          "blocks_completion": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "repair_scope": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "required_outcome": {
             "type": "string"
           },
           "severity": {
@@ -231,88 +298,53 @@
               "BLOCKER"
             ]
           },
-          "title": {
-            "type": "string"
-          },
-          "problem": {
-            "type": "string"
-          },
-          "required_outcome": {
-            "type": "string"
-          },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "location": {
-            "type": "string"
-          },
           "suggested_test": {
             "type": "string"
           },
-          "repair_scope": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "blocks_completion": {
-            "type": "boolean"
+          "title": {
+            "type": "string"
           }
         },
-        "additionalProperties": false
-      }
-    },
-    "missing_evidence": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "evidence_ledger_entries": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "model_routing": {
-      "type": "object",
-      "properties": {
-        "alias": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "provider": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "model": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "selected_model": {
-          "type": "string"
-        },
-        "reasoning_effort": {
-          "type": "string"
-        },
-        "fallback_used": {
-          "type": "boolean"
-        },
-        "notes": {
-          "type": "string"
-        }
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "problem",
+          "required_outcome",
+          "evidence"
+        ],
+        "type": "object"
       },
-      "additionalProperties": true
+      "type": "array"
+    },
+    "validator": {
+      "const": "validator-agent"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "REJECT",
+        "BLOCKED"
+      ]
     }
   },
-  "additionalProperties": false
+  "required": [
+    "schema_version",
+    "validator",
+    "task_id",
+    "attempt",
+    "verdict",
+    "context_coverage",
+    "artifact_identity_checks",
+    "acceptance_criteria",
+    "negative_cases",
+    "invariant_matrix",
+    "review_status",
+    "unresolved_findings",
+    "missing_evidence",
+    "evidence_ledger_entries",
+    "model_routing"
+  ],
+  "title": "Task Validation Result",
+  "type": "object"
 }

@@ -1,0 +1,53 @@
+{
+  "context_folder": "project-packs/invoice-governance/context",
+  "files": [
+    {
+      "content_excerpt": "# Invoice Governance Project Context\n\nThis folder contains project-specific context for the invoice-governance harness pack. Files here are included in assembled Context Packs and should influence expectation derivation, epic/task decomposition, implementation, review, validation, and teach-me reporting.\n",
+      "context_id": "CTX-INVOICE-GOVERNANCE-README",
+      "kind": "markdown",
+      "path": "project-packs/invoice-governance/context/README.md",
+      "phase_availability": [
+        "assemble_context",
+        "derive_expectations",
+        "validate_expectations",
+        "derive_tasks",
+        "validate_tasks",
+        "implementation",
+        "review",
+        "domain_review",
+        "validation",
+        "teach_me"
+      ],
+      "sha256": "b302c8d976ee2255e17fea18ecca1eff428d0bf5f3d54f2dcac6cb653b7aa324",
+      "size_bytes": 306,
+      "summary": "This folder contains project-specific context for the invoice-governance harness pack. Files here are included in assembled Context Packs and should influence expectation derivation, epic/task decomposition, implementation, review, validation, and teach-me reporting.",
+      "title": "Invoice Governance Project Context"
+    },
+    {
+      "content_excerpt": "# Ingestion Pipeline Project Context\n\nThe ingestion pipeline ingests contractor governance sources into traceable bronze/silver outputs. Runtime implementation must preserve source lineage, classify invalid or ambiguous records, support deterministic reruns, and keep build-auto local unless explicit cloud authority is granted.\n\nImportant source concepts:\n\n- SAP work orders provide work-order and approval context.\n- Vendor invoices and rate cards may use vendor IDs.\n- Work orders may use vendor names, requiring vendor-master reconciliation.\n- DSX gate events support attendance evidence but must not be attributed to the wrong work order.\n\nImplementation implications:\n\n- Raw/source metadata must be retained before normalization.\n- Accepted and rejected rows both need source lineage.\n- Ambiguous reconciliation must be classified, not guessed.\n- Local tests should use fixtures/mocks rather than live Azure or Databricks calls.\n",
+      "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+      "kind": "markdown",
+      "path": "project-packs/invoice-governance/context/ingestion-context.md",
+      "phase_availability": [
+        "assemble_context",
+        "derive_expectations",
+        "validate_expectations",
+        "derive_tasks",
+        "validate_tasks",
+        "implementation",
+        "review",
+        "domain_review",
+        "validation",
+        "teach_me"
+      ],
+      "sha256": "7b6f9622919b5586cceb133106507e12e1a2130696d1a2150fe595b833bc3baf",
+      "size_bytes": 935,
+      "summary": "The ingestion pipeline ingests contractor governance sources into traceable bronze/silver outputs. Runtime implementation must preserve source lineage, classify invalid or ambiguous records, support deterministic reruns, and keep build-auto local unless explicit cloud authority is granted. Important source concepts: - SAP work orders provide work-order and approval context.",
+      "title": "Ingestion Pipeline Project Context"
+    }
+  ],
+  "project_pack": "invoice-governance",
+  "schema_version": "1.0",
+  "selection_strategy": "simple-folder-scan: include supported UTF-8 files under project-pack context/ for all planning/build/review phases; task contracts narrow usage.",
+  "warnings": []
+}

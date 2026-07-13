@@ -1,16 +1,28 @@
 {
+  "agents": [
+    "domain-reviewer-agent"
+  ],
+  "compatible_harness_versions": [
+    ">=0.6.4 <0.7.0"
+  ],
   "name": "invoice-governance",
-  "version": "0.1.0",
-  "compatible_harness_versions": [">=0.5.6 <0.7.0"],
-  "agents": ["domain-reviewer-agent"],
-  "skills": ["invoice-domain-review"],
-  "rules": ["invoice-data-invariants"],
-  "schemas": ["schemas/domain-review-result.schema.json"],
   "required_files": [
     "README.md",
     "skills/invoice-domain-review/SKILL.md",
     "skills/invoice-domain-review/references/domain-invariants.md",
     "skills/invoice-domain-review/references/failure-modes.md",
-    "skills/invoice-domain-review/references/pipeline-testing-strategy.md"
-  ]
+    "skills/invoice-domain-review/references/pipeline-testing-strategy.md",
+    "context/README.md",
+    "context/ingestion-context.md"
+  ],
+  "rules": [
+    "invoice-data-invariants"
+  ],
+  "schemas": [
+    "schemas/domain-review-result.schema.json"
+  ],
+  "skills": [
+    "invoice-domain-review"
+  ],
+  "version": "0.1.0"
 }

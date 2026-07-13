@@ -10,10 +10,12 @@ The harness separates human-owned product judgment from machine-owned build mech
 flowchart LR
     H[Human] --> I[Intent]
     H --> E[Expectations approval]
+    H --> TS[Technical Spec approval]
     HC[Harness] --> C[Context pack]
-    I --> T[Task contracts]
-    C --> T
-    E --> T
+    I --> TS
+    C --> TS
+    E --> TS
+    TS --> T[Task contracts]
     T --> B[/build-auto/]
     B --> V[Tests + reviews + validator]
     V --> R[Reports + teach-me]
@@ -29,15 +31,17 @@ flowchart TD
     D --> E[Assemble context]
     E --> F[Derive expectations]
     F --> G[Validate expectations]
-    G --> H[Derive task contracts]
-    H --> I[Validate task test expectations]
-    I --> J[Prepare run]
-    J --> K[Approve run]
-    K --> L[Start run]
-    L --> M[Run /build-auto]
-    M --> N[Finalize session]
-    N --> O[Run /teach-report]
-    O --> P[Run /teach-me if needed]
+    G --> H[Derive Technical Spec]
+    H --> I[Validate Technical Spec]
+    I --> J[Derive task contracts]
+    J --> K[Validate task contracts]
+    K --> L[Prepare run]
+    L --> M[Approve run]
+    M --> N[Start run]
+    N --> O[Run /build-auto]
+    O --> P[Finalize session]
+    P --> Q[Run /teach-report]
+    Q --> R[Run /teach-me if needed]
 ```
 
 ## Step 1 — Install in a new repository
@@ -123,7 +127,19 @@ unit → integration → local_e2e → cloud_e2e
 
 Cloud E2E is normally marked as not required for `/build-auto` unless explicit environment authority exists.
 
-## Step 5 — Derive task contracts
+## Step 5 — Derive and validate the Technical Spec
+
+The Technical Spec is the bridge between Expectations and Task Contracts. It captures concrete implementation choices: architecture, dependencies, module boundaries, data flow, configuration, error handling, lineage/idempotency, and testing implications.
+
+```bash
+python -B scripts/schema_validator.py --kind technical-spec --path docs/technical-specs/<intent-id>.json
+python -B scripts/validate_technical_spec.py --spec docs/technical-specs/<intent-id>.json --output docs/validation-reports/<intent-id>-technical-spec-validation.json
+python -B scripts/schema_validator.py --kind technical-spec-validation-result --path docs/validation-reports/<intent-id>-technical-spec-validation.json
+```
+
+Do not derive tasks until the Technical Spec is validated and human-reviewed.
+
+## Step 6 — Derive task contracts
 
 Task contracts must be vertical slices and must include:
 
@@ -149,7 +165,7 @@ Validate:
 python -B scripts/test_strategy.py validate-contracts --contracts docs/task-contracts/<intent-id>.json
 ```
 
-## Step 6 — Prepare and approve the run
+## Step 7 — Prepare and approve the run
 
 ```bash
 python -B scripts/prepare_run.py \
@@ -157,8 +173,11 @@ python -B scripts/prepare_run.py \
   --intent docs/intents/<intent-id>.md \
   --context docs/context/<intent-id>.json \
   --expectations docs/expectations/<intent-id>.json \
+  --technical-spec docs/technical-specs/<intent-id>.json \
+  --technical-spec-validation docs/validation-reports/<intent-id>-technical-spec-validation.json \
   --tasks docs/task-contracts/<intent-id>.json \
-  --expectation-validation docs/validation-reports/<intent-id>-expectations-validation.md \
+  --expectation-validation docs/validation-reports/<intent-id>-expectations-validation.json \
+  --task-validation docs/validation-reports/<intent-id>-task-contract-validation.json \
   --output tasks/run_manifest.json \
   --state-output tasks/run_state.json \
   --feature-output tasks/feature_list.json
@@ -166,7 +185,7 @@ python -B scripts/prepare_run.py \
 python -B scripts/approve_run.py --manifest tasks/run_manifest.json
 ```
 
-## Step 7 — Run build automation
+## Step 8 — Run build automation
 
 ```bash
 python -B scripts/preflight.py --manifest tasks/run_manifest.json --create-branch
@@ -179,7 +198,7 @@ The action packet tells you which command/agent/model to use next. Continue the 
 python -B scripts/build_orchestrator.py record-result --action-id <ACTION_ID> --result <RESULT_JSON>
 ```
 
-## Step 8 — Understand the testing hierarchy
+## Step 9 — Understand the testing hierarchy
 
 ```mermaid
 flowchart TD
@@ -196,7 +215,7 @@ For pipeline projects:
 - local E2E proves fixture input to validated output;
 - cloud E2E proves deployed Databricks/Azure runtime and is deferred until explicit authority.
 
-## Step 9 — Finalize and teach
+## Step 10 — Finalize and teach
 
 ```bash
 python -B scripts/finalize_session.py
@@ -244,3 +263,41 @@ python -B scripts/agent_result_contracts.py validate --kind review --path docs/r
 python -B scripts/agent_result_contracts.py validate --kind domain-review --path docs/reviews/<task-id>/domain-review.json --task-id <task-id> --agent domain-reviewer-agent
 python -B scripts/agent_result_contracts.py validate --kind validation --path docs/validation-results/<task-id>-validator.json --task-id <task-id> --agent validator-agent
 ```
+
+## Project-pack context folder flow — v0.6.3
+
+Use this when you have project-specific information that should influence planning and implementation, such as source APIs, required fields, business terms, response formats, local fixtures, or implementation constraints.
+
+```mermaid
+flowchart TD
+    A[Add files under project-packs/<project>/context] --> B[Validate project context]
+    B --> C[Assemble Context Pack]
+    C --> D[Derive Expectations with source_context]
+    D --> E[Derive Technical Spec]
+    E --> F[Validate Technical Spec]
+    F --> G[Derive epics/tasks with required_context + context_files + technical_spec_refs]
+    G --> H[Validate tasks]
+    F --> G[Prepare run]
+    G --> H[Build-auto action packet includes selected context]
+```
+
+Commands:
+
+```bash
+python -B scripts/project_context.py validate --pack project-packs/<project-name>
+python -B scripts/assemble_context.py --intent docs/intents/<intent-id>.md --output-json docs/context/<intent-id>.json --output-md docs/context/<intent-id>.md
+python -B scripts/schema_validator.py --kind context-pack --path docs/context/<intent-id>.json
+```
+
+Then continue with:
+
+```text
+/derive-expectations
+/validate-expectations
+/derive-technical-spec
+/validate-technical-spec
+/derive-tasks
+/validate-tasks
+```
+
+Do not start `/build-auto` unless the task contracts contain `required_context`, `context_files`, and `technical_spec_refs` for every task.

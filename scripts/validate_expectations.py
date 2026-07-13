@@ -7,7 +7,7 @@ from harnesslib import repository_root, validate_json_schema, load_json, write_j
 
 TIERS = ["unit", "integration", "local_e2e", "cloud_e2e"]
 
-def validate_semantics(expectations: dict) -> list[dict]:
+def validate_semantics(expectations: dict, repo=None) -> list[dict]:
     findings: list[dict] = []
     matrix = expectations.get("testing_expectations_matrix", [])
     if not matrix:
@@ -27,6 +27,25 @@ def validate_semantics(expectations: dict) -> list[dict]:
         findings.append({"id":"EXP-SUCCESS-001","severity":"BLOCKER","title":"Missing success scenarios","required_change":"Add observable success scenarios."})
     if not expectations.get("failure_scenarios"):
         findings.append({"id":"EXP-FAIL-001","severity":"BLOCKER","title":"Missing failure scenarios","required_change":"Add observable failure scenarios."})
+
+    source_context = expectations.get("source_context")
+    if not isinstance(source_context, dict):
+        findings.append({"id":"EXP-CONTEXT-001","severity":"BLOCKER","title":"Missing source_context","required_change":"Reference the assembled Context Pack and project context files used to derive expectations."})
+    else:
+        cpath = source_context.get("context_pack_path")
+        if not cpath:
+            findings.append({"id":"EXP-CONTEXT-002","severity":"BLOCKER","title":"source_context.context_pack_path missing","required_change":"Add docs/context/<intent-id>.json path."})
+        elif repo is not None and not (repo / cpath).exists():
+            findings.append({"id":"EXP-CONTEXT-003","severity":"BLOCKER","title":"Referenced context pack does not exist","required_change":"Run /assemble-context and reference the generated docs/context/<intent-id>.json."})
+        files = source_context.get("project_context_files")
+        if not isinstance(files, list):
+            findings.append({"id":"EXP-CONTEXT-004","severity":"BLOCKER","title":"source_context.project_context_files missing","required_change":"List project-pack context files used, or an empty list with omitted_project_context_files rationale if none exist."})
+        else:
+            for i, f in enumerate(files, 1):
+                if not f.get("context_id") or not f.get("path") or not f.get("used_for"):
+                    findings.append({"id":f"EXP-CONTEXT-FILE-{i:03d}","severity":"BLOCKER","title":"Incomplete project context file reference","required_change":"Each project_context_files entry needs context_id, path, and used_for."})
+                elif repo is not None and not (repo / f.get("path")).exists():
+                    findings.append({"id":f"EXP-CONTEXT-FILE-{i:03d}","severity":"BLOCKER","title":"Project context file path does not exist","required_change":"Reference a file under the active project pack context/ folder."})
     return findings
 
 def main() -> int:
@@ -43,12 +62,13 @@ def main() -> int:
     except Exception as exc:
         schema_status = "FAIL"; schema_errors.append(str(exc))
     expectations = load_json(exp_path)
-    findings = validate_semantics(expectations)
+    findings = validate_semantics(expectations, repo)
     semantic_checks = [
         {"check":"expectations schema","status":schema_status,"evidence":"schemas/expectations.schema.json"},
         {"check":"testing expectations matrix declares all tiers","status":"PASS" if not any(f['id'].startswith('EXP-TEST') for f in findings) else "FAIL","evidence":"testing_expectations_matrix"},
         {"check":"required_testing_tiers declares all tiers","status":"PASS" if not any(f['id'].startswith('EXP-TIER') for f in findings) else "FAIL","evidence":"required_testing_tiers"},
         {"check":"success and failure scenarios present","status":"PASS" if expectations.get('success_scenarios') and expectations.get('failure_scenarios') else "FAIL","evidence":"success_scenarios/failure_scenarios"},
+        {"check":"project context references present","status":"PASS" if expectations.get('source_context') else "FAIL","evidence":"source_context"},
     ]
     result = {
         "schema_version":"1.0",

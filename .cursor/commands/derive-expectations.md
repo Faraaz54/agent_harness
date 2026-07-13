@@ -17,6 +17,8 @@ Write:
 - `docs/expectations/<intent-id>.json`
 - `docs/expectation-derivation-results/<intent-id>.json`
 
+The JSON expectations artifact must include `source_context`, referencing `docs/context/<intent-id>.json` and the project-pack context files used during derivation.
+
 The JSON expectations artifact must validate against:
 
 ```bash

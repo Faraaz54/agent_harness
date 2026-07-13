@@ -48,6 +48,13 @@
     "schema_version": {
       "type": "string"
     },
+    "source_context_status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "MISSING"
+      ]
+    },
     "testing_matrix_status": {
       "enum": [
         "COMPLETE",
@@ -68,6 +75,7 @@
     "intent_id",
     "verdict",
     "artifacts",
+    "source_context_status",
     "testing_matrix_status",
     "assumptions",
     "open_questions",

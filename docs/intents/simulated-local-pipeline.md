@@ -7,7 +7,7 @@ Build a local pipeline that reads fixture source rows and produces validated out
 ## Constraints
 
 - Preserve source lineage.
-- Support deterministic reruns.
+- Support deterministic idempotent reruns.
 - Keep implementation local; no cloud mutation.
 
 ## Failure Conditions

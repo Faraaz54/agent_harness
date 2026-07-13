@@ -33,6 +33,31 @@
     "principal-engineer-agent"
   ],
   "schema_version": "1.0",
+  "source_context": {
+    "context_pack_id": "simulated-local-pipeline",
+    "context_pack_path": "docs/context/simulated-local-pipeline.json",
+    "omitted_project_context_files": [],
+    "project_context_files": [
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-README",
+        "path": "project-packs/invoice-governance/context/README.md",
+        "used_for": [
+          "expectation_derivation",
+          "technical_specification",
+          "task_decomposition"
+        ]
+      },
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+        "path": "project-packs/invoice-governance/context/ingestion-context.md",
+        "used_for": [
+          "expectation_derivation",
+          "technical_specification",
+          "task_decomposition"
+        ]
+      }
+    ]
+  },
   "source_context_id": "simulated-local-pipeline",
   "stop_conditions": [
     "Cloud execution is required."

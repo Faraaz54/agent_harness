@@ -1,119 +1,76 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Domain Review Result",
-  "type": "object",
-  "required": [
-    "schema_version",
-    "review_type",
-    "reviewer",
-    "project_pack",
-    "domain_skill",
-    "task_id",
-    "attempt",
-    "verdict",
-    "domain_entities_reviewed",
-    "invariants",
-    "findings",
-    "repair_guidance",
-    "model_routing"
-  ],
+  "additionalProperties": false,
   "properties": {
-    "schema_version": {
-      "const": "1.0"
+    "attempt": {
+      "minimum": 1,
+      "type": "integer"
     },
-    "review_type": {
-      "enum": [
-        "domain",
-        "invoice-domain",
-        "python-domain"
-      ]
+    "context_files_reviewed": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "context_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "used_for": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "context_id",
+          "path",
+          "used_for"
+        ],
+        "type": "object"
+      },
+      "type": "array"
     },
-    "reviewer": {
-      "const": "domain-reviewer-agent"
-    },
-    "project_pack": {
-      "type": "string"
+    "domain_entities_reviewed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "domain_skill": {
       "type": "string"
     },
-    "task_id": {
-      "type": "string"
-    },
-    "attempt": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "verdict": {
-      "enum": [
-        "PASS",
-        "CHANGES_REQUIRED",
-        "BLOCKED",
-        "BLOCKED_BY_AMBIGUITY",
-        "BLOCKED_BY_MISSING_CONTEXT"
-      ]
-    },
-    "domain_entities_reviewed": {
-      "type": "array",
+    "findings": {
       "items": {
-        "type": "string"
-      }
-    },
-    "invariants": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "description",
-          "status",
-          "evidence"
-        ],
+        "additionalProperties": false,
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "enum": [
-              "PASS",
-              "FAIL",
-              "NOT_APPLICABLE",
-              "UNKNOWN"
-            ]
+          "blocks_completion": {
+            "type": "boolean"
           },
           "evidence": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
-          "finding_ids": {
-            "type": "array",
+          "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "repair_scope": {
             "items": {
               "type": "string"
-            }
-          }
-        },
-        "additionalProperties": false
-      }
-    },
-    "findings": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "severity",
-          "title",
-          "problem",
-          "required_outcome",
-          "evidence"
-        ],
-        "properties": {
-          "id": {
+            },
+            "type": "array"
+          },
+          "required_outcome": {
             "type": "string"
           },
           "severity": {
@@ -125,71 +82,68 @@
               "BLOCKER"
             ]
           },
-          "title": {
-            "type": "string"
-          },
-          "problem": {
-            "type": "string"
-          },
-          "required_outcome": {
-            "type": "string"
-          },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "location": {
-            "type": "string"
-          },
           "suggested_test": {
             "type": "string"
           },
-          "repair_scope": {
-            "type": "array",
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "problem",
+          "required_outcome",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "invariants": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "evidence": {
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
-          "blocks_completion": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      }
-    },
-    "repair_guidance": {
-      "type": "object",
-      "required": [
-        "allowed",
-        "scope",
-        "do_not_change"
-      ],
-      "properties": {
-        "allowed": {
-          "type": "boolean"
-        },
-        "scope": {
-          "type": "array",
-          "items": {
+          "finding_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
             "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_APPLICABLE",
+              "UNKNOWN"
+            ]
           }
         },
-        "do_not_change": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "notes": {
-          "type": "string"
-        }
+        "required": [
+          "id",
+          "description",
+          "status",
+          "evidence"
+        ],
+        "type": "object"
       },
-      "additionalProperties": false
+      "type": "array"
     },
     "model_routing": {
-      "type": "object",
+      "additionalProperties": true,
       "properties": {
         "alias": {
           "type": [
@@ -197,11 +151,8 @@
             "null"
           ]
         },
-        "provider": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "fallback_used": {
+          "type": "boolean"
         },
         "model": {
           "type": [
@@ -209,21 +160,98 @@
             "null"
           ]
         },
-        "selected_model": {
+        "notes": {
           "type": "string"
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "reasoning_effort": {
           "type": "string"
         },
-        "fallback_used": {
-          "type": "boolean"
-        },
-        "notes": {
+        "selected_model": {
           "type": "string"
         }
       },
-      "additionalProperties": true
+      "type": "object"
+    },
+    "project_pack": {
+      "type": "string"
+    },
+    "repair_guidance": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "type": "boolean"
+        },
+        "do_not_change": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "scope": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed",
+        "scope",
+        "do_not_change"
+      ],
+      "type": "object"
+    },
+    "review_type": {
+      "enum": [
+        "domain",
+        "invoice-domain",
+        "python-domain"
+      ]
+    },
+    "reviewer": {
+      "const": "domain-reviewer-agent"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CHANGES_REQUIRED",
+        "BLOCKED",
+        "BLOCKED_BY_AMBIGUITY",
+        "BLOCKED_BY_MISSING_CONTEXT"
+      ]
     }
   },
-  "additionalProperties": false
+  "required": [
+    "schema_version",
+    "review_type",
+    "reviewer",
+    "project_pack",
+    "domain_skill",
+    "task_id",
+    "attempt",
+    "verdict",
+    "context_files_reviewed",
+    "domain_entities_reviewed",
+    "invariants",
+    "findings",
+    "repair_guidance",
+    "model_routing"
+  ],
+  "title": "Domain Review Result",
+  "type": "object"
 }

@@ -17,6 +17,32 @@
       ],
       "type": "object"
     },
+    "context_files_considered": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "applied_to": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "context_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "context_id",
+          "path",
+          "applied_to"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
     "epics": {
       "items": {
         "type": "object"
@@ -44,6 +70,29 @@
       },
       "type": "array"
     },
+    "technical_spec_considered": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sections_used": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "spec_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "spec_id",
+        "sections_used"
+      ],
+      "type": "object"
+    },
     "verdict": {
       "enum": [
         "PASS",
@@ -61,7 +110,9 @@
     "artifacts",
     "epics",
     "tasks",
-    "model_routing"
+    "model_routing",
+    "context_files_considered",
+    "technical_spec_considered"
   ],
   "title": "Task Decomposition Result",
   "type": "object"

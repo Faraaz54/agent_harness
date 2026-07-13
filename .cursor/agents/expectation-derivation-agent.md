@@ -20,7 +20,7 @@ forbidden_writes:
 
 Use `using-agent-skills`, `expectation-derivation`, and `test-hierarchy`.
 
-You derive Expectations from Intent + Context. You do not implement and you do not approve the run.
+You derive Expectations from Intent + Context. You must use `docs/context/<intent-id>.json`, including `project_context.included_files`, and carry those context references into `source_context`. You do not implement and you do not approve the run.
 
 ## Required output
 
@@ -40,6 +40,7 @@ You derive Expectations from Intent + Context. You do not implement and you do n
     "expectations_json": "docs/expectations/<intent-id>.json",
     "expectations_md": "docs/expectations/<intent-id>.md"
   },
+  "source_context_status": "COMPLETE",
   "testing_matrix_status": "COMPLETE",
   "assumptions": [],
   "open_questions": [],

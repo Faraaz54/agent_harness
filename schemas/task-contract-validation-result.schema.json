@@ -5,6 +5,12 @@
     "agent": {
       "const": "task-contract-validation-agent"
     },
+    "context_checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
     "dependency_checks": {
       "items": {
         "type": "object"
@@ -35,6 +41,12 @@
     "schema_version": {
       "type": "string"
     },
+    "technical_spec_checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
     "test_expectation_checks": {
       "items": {
         "type": "object"
@@ -61,6 +73,8 @@
     "epic_checks",
     "test_expectation_checks",
     "dependency_checks",
+    "context_checks",
+    "technical_spec_checks",
     "findings",
     "model_routing"
   ],

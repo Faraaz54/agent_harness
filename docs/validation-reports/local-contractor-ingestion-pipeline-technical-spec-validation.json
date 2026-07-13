@@ -1,0 +1,120 @@
+{
+  "agent": "technical-spec-validation-agent",
+  "checks": [
+    {
+      "id": "TECH-SOURCE-INTENT",
+      "status": "PASS",
+      "title": "Intent artifact exists"
+    },
+    {
+      "id": "TECH-SOURCE-CONTEXT",
+      "status": "PASS",
+      "title": "Context Pack artifact exists"
+    },
+    {
+      "id": "TECH-SOURCE-EXPECTATIONS",
+      "status": "PASS",
+      "title": "Expectations artifact exists"
+    },
+    {
+      "id": "TECH-SECTION-ARCHITECTURE",
+      "status": "PASS",
+      "title": "Technical spec declares architecture"
+    },
+    {
+      "id": "TECH-SECTION-DEPENDENCIES",
+      "status": "PASS",
+      "title": "Technical spec declares dependencies"
+    },
+    {
+      "id": "TECH-SECTION-MODULE_DESIGN",
+      "status": "PASS",
+      "title": "Technical spec declares module_design"
+    },
+    {
+      "id": "TECH-SECTION-DATA_FLOW",
+      "status": "PASS",
+      "title": "Technical spec declares data_flow"
+    },
+    {
+      "id": "TECH-SECTION-IMPLEMENTATION_RULES",
+      "status": "PASS",
+      "title": "Technical spec declares implementation_rules"
+    },
+    {
+      "id": "TECH-SECTION-CONFIGURATION",
+      "status": "PASS",
+      "title": "Technical spec declares configuration"
+    },
+    {
+      "id": "TECH-SECTION-TESTING_IMPLICATIONS",
+      "status": "PASS",
+      "title": "Technical spec declares testing_implications"
+    },
+    {
+      "id": "TECH-SECTION-TECHNICAL_DECISIONS",
+      "status": "PASS",
+      "title": "Technical spec declares technical_decisions"
+    },
+    {
+      "id": "TECH-SECTION-DEFERRED_ITEMS",
+      "status": "PASS",
+      "title": "Technical spec declares deferred_items"
+    },
+    {
+      "id": "TECH-LIB-1",
+      "status": "PASS",
+      "title": "Required library #1 is justified"
+    },
+    {
+      "id": "TECH-LIB-2",
+      "status": "PASS",
+      "title": "Required library #2 is justified"
+    },
+    {
+      "id": "TECH-LIB-3",
+      "status": "PASS",
+      "title": "Required library #3 is justified"
+    },
+    {
+      "id": "TECH-TEST-unit",
+      "status": "PASS",
+      "title": "Testing implications include unit"
+    },
+    {
+      "id": "TECH-TEST-integration",
+      "status": "PASS",
+      "title": "Testing implications include integration"
+    },
+    {
+      "id": "TECH-TEST-local_e2e",
+      "status": "PASS",
+      "title": "Testing implications include local_e2e"
+    },
+    {
+      "id": "TECH-TEST-cloud_e2e",
+      "status": "PASS",
+      "title": "Testing implications include cloud_e2e"
+    },
+    {
+      "id": "TECH-CONTEXT-1",
+      "status": "PASS",
+      "title": "Project context reference #1 is resolvable"
+    }
+  ],
+  "findings": [],
+  "intent_id": "local-contractor-ingestion-pipeline",
+  "model_routing": {
+    "alias": "validation_reasoning",
+    "selected_model": "operator-or-ide-selected"
+  },
+  "schema_validation": {
+    "errors": [],
+    "schema": "schemas/technical-spec.schema.json",
+    "status": "PASS"
+  },
+  "schema_version": "1.0",
+  "spec_id": "TECH-local-contractor-ingestion-pipeline",
+  "validated_at": "2026-07-13T02:54:57.067919+00:00",
+  "verdict": "PASS"
+}

@@ -1,0 +1,147 @@
+{
+  "architecture": {
+    "entrypoints": [
+      "python -m ingestion.run_pipeline"
+    ],
+    "runtime_targets": [
+      "local_python",
+      "azure_databricks_later"
+    ],
+    "style": "modular batch ingestion pipeline"
+  },
+  "configuration": {
+    "database_url": "environment variable or test fixture config",
+    "landing_root": "CLI/config value"
+  },
+  "data_flow": [
+    {
+      "description": "Read approved landing/source files into raw parsed rows.",
+      "inputs": [
+        "SAP work-order CSV"
+      ],
+      "outputs": [
+        "parsed raw rows"
+      ],
+      "stage": "read_source"
+    },
+    {
+      "description": "Validate raw rows and persist accepted/rejected rows with lineage.",
+      "inputs": [
+        "parsed raw rows"
+      ],
+      "outputs": [
+        "bronze records",
+        "rejection records"
+      ],
+      "stage": "validate_and_persist_bronze"
+    }
+  ],
+  "deferred_items": [
+    {
+      "item": "Databricks job submission",
+      "reason": "Reserved for goal loop or explicit environment authority."
+    }
+  ],
+  "dependencies": {
+    "forbidden_libraries": [
+      {
+        "name": "hard-coded cloud SDK clients",
+        "reason": "Cloud mutation is outside build-auto authority"
+      }
+    ],
+    "package_manager": "pip",
+    "required_libraries": [
+      {
+        "allowed_usage": "source file parsing and tabular validation",
+        "name": "pandas",
+        "reason": "Parse CSV/XLSX source fixtures during MVP ingestion"
+      },
+      {
+        "allowed_usage": "database connection and transaction management",
+        "name": "sqlalchemy",
+        "reason": "Abstract local Postgres writes with future cloud runtime portability"
+      },
+      {
+        "allowed_usage": "runtime models and validation errors",
+        "name": "pydantic",
+        "reason": "Validate parsed records and configuration objects"
+      }
+    ]
+  },
+  "error_handling": {
+    "fatal_schema": "fail loud with actionable error",
+    "invalid_rows": "persist rejection with lineage"
+  },
+  "implementation_rules": [
+    "Do not hard-code absolute local paths.",
+    "Every accepted bronze row must retain source_file_id and source_row_number.",
+    "Every rejected row must retain source lineage and a reason code.",
+    "Use deterministic idempotency keys; ingestion timestamp is not a business key.",
+    "Do not execute Azure or Databricks jobs in build-auto."
+  ],
+  "intent_id": "local-contractor-ingestion-pipeline",
+  "module_design": {
+    "src/ingestion/bronze": "bronze persistence and source lineage",
+    "src/ingestion/config": "configuration loading and environment contracts",
+    "src/ingestion/lineage": "source row identifiers and idempotency keys",
+    "src/ingestion/sources": "source-specific file/API readers",
+    "src/ingestion/validation": "row validation and rejection codes"
+  },
+  "observability": {
+    "logging": "batch id, source file, accepted/rejected counts"
+  },
+  "risks": [
+    {
+      "mitigation": "Keep source contracts in project-pack context and validate with local E2E fixtures.",
+      "risk": "Local fixtures may diverge from future production APIs"
+    }
+  ],
+  "schema_version": "1.0",
+  "source_artifacts": {
+    "context_pack_path": "project-packs/invoice-governance/examples/ingestion-context-pack.example.json",
+    "expectations_path": "project-packs/invoice-governance/examples/ingestion-expectations.json",
+    "intent_path": "project-packs/invoice-governance/examples/ingestion-intent.md",
+    "omitted_project_context_files": [],
+    "project_context_files": [
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+        "path": "project-packs/invoice-governance/context/ingestion-context.md",
+        "used_for": [
+          "technical_specification",
+          "task_decomposition",
+          "implementation",
+          "review",
+          "validation"
+        ]
+      }
+    ]
+  },
+  "spec_id": "TECH-local-contractor-ingestion-pipeline",
+  "status": "validated",
+  "technical_decisions": [
+    {
+      "alternatives_considered": [
+        "Databricks notebook-only MVP"
+      ],
+      "decision": "Use a modular Python package instead of notebook-first implementation",
+      "rationale": "Reusable across local execution and future Azure/Databricks deployment."
+    }
+  ],
+  "testing_implications": {
+    "cloud_e2e": [
+      "deferred to goal-auto or explicit environment authority"
+    ],
+    "integration": [
+      "local database/filesystem boundary",
+      "bronze and rejection writes"
+    ],
+    "local_e2e": [
+      "fixture landing folder to validated bronze/rejection outputs"
+    ],
+    "unit": [
+      "parser validation",
+      "required-column validation",
+      "lineage/idempotency key construction"
+    ]
+  }
+}

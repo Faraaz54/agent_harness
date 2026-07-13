@@ -30,6 +30,7 @@ Read the action context packet from the orchestrator. It is your implementation 
 - relevant Expectations excerpt;
 - task contract;
 - context pack excerpts named by the action packet;
+- task `required_context` and `context_files` references;
 - environment bootstrap;
 - existing tests near the touched code;
 - exports, immediate callers, shared utilities, and conventions for each file you intend to edit;
@@ -87,6 +88,9 @@ Return only this JSON object in the artifact:
     "simple-python-implementation",
     "testing-patterns",
     "test-hierarchy"
+  ],
+  "context_files_used": [
+    {"context_id": "<context-id>", "path": "<project-pack context path>", "used_for": ["implementation"]}
   ],
   "files_read_before_write": [
     "<path read before editing>"
@@ -150,3 +154,8 @@ Use the `execution_medium` model alias unless the orchestrator action explicitly
 ## Testing hierarchy obligation
 
 Before editing code, classify the required verification tier for the task. Start with the smallest RED test at the lowest adequate level, then run required higher tiers before marking implementation complete. Pipeline work normally requires local E2E evidence before final closure; cloud E2E belongs to goal/environment verification unless explicitly authorised.
+
+
+## Technical Spec context
+
+When an action packet includes `technical_spec` or `technical_spec_context`, treat it as binding implementation/review context. Do not implement or approve behaviour that contradicts the referenced Technical Spec sections. If the spec is insufficient or inconsistent with the task contract, return a structured blocking finding rather than inventing hidden design choices.

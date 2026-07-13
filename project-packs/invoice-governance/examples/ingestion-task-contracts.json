@@ -18,6 +18,18 @@
         "The focused parser verification command passes."
       ],
       "behavior": "Parse an approved SAP work-order CSV and persist one bronze record per accepted raw row with source file and row identifiers",
+      "context_files": [
+        {
+          "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+          "path": "project-packs/invoice-governance/context/ingestion-context.md",
+          "used_for": [
+            "implementation",
+            "testing",
+            "domain_review",
+            "validation"
+          ]
+        }
+      ],
       "dependencies": [],
       "epic_id": "INGESTION-EPIC-001",
       "negative_cases": [
@@ -29,6 +41,9 @@
         "No silver normalization"
       ],
       "objective": "Load one SAP work-order source file into bronze with row-level lineage",
+      "required_context": [
+        "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT"
+      ],
       "required_reviewers": [
         "test-agent",
         "principal-engineer-agent",
@@ -44,6 +59,24 @@
         "Task requires changing approved expectations"
       ],
       "task_id": "ING-001",
+      "technical_spec_refs": [
+        {
+          "reason": "Task must use only approved dependency choices.",
+          "section": "dependencies.required_libraries"
+        },
+        {
+          "reason": "Task implementation must follow approved module boundaries.",
+          "section": "module_design"
+        },
+        {
+          "reason": "Task must preserve lineage/idempotency and avoid cloud mutation.",
+          "section": "implementation_rules"
+        },
+        {
+          "reason": "Task verification must follow approved testing implications.",
+          "section": "testing_implications"
+        }
+      ],
       "test_expectations": {
         "cloud_e2e": {
           "evidence_required": [],
@@ -124,5 +157,11 @@
         ]
       }
     }
-  ]
+  ],
+  "technical_spec": {
+    "path": "project-packs/invoice-governance/examples/ingestion-technical-spec.json",
+    "spec_id": "TECH-local-contractor-ingestion-pipeline",
+    "status": "validated",
+    "validation_path": "docs/validation-reports/local-contractor-ingestion-pipeline-technical-spec-validation.json"
+  }
 }

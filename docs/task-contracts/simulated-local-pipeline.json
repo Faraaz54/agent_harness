@@ -22,12 +22,33 @@
         "tests/**"
       ],
       "behavior": "Read fixture rows, validate them, write output and rejection records with lineage.",
+      "context_files": [
+        {
+          "context_id": "CTX-INVOICE-GOVERNANCE-README",
+          "path": "project-packs/invoice-governance/context/README.md",
+          "used_for": [
+            "implementation",
+            "review",
+            "validation"
+          ]
+        },
+        {
+          "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+          "path": "project-packs/invoice-governance/context/ingestion-context.md",
+          "used_for": [
+            "implementation",
+            "review",
+            "validation"
+          ]
+        }
+      ],
       "dependencies": [],
       "epic_id": "PIPE-EPIC-001",
       "forbidden_paths": [
         "docs/intents/**",
         "docs/expectations/**",
         "docs/task-contracts/**",
+        "docs/technical-specs/**",
         ".env"
       ],
       "negative_cases": [
@@ -37,6 +58,10 @@
         "No Azure or Databricks execution"
       ],
       "objective": "Implement one local source-to-output pipeline slice",
+      "required_context": [
+        "CTX-INVOICE-GOVERNANCE-README",
+        "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT"
+      ],
       "required_reviewers": [
         "test-agent",
         "principal-engineer-agent"
@@ -50,6 +75,20 @@
         "Need to mutate cloud resources"
       ],
       "task_id": "PIPE-001",
+      "technical_spec_refs": [
+        {
+          "reason": "Task implements the approved module boundaries.",
+          "section": "module_design"
+        },
+        {
+          "reason": "Task must preserve lineage/idempotency and avoid cloud calls.",
+          "section": "implementation_rules"
+        },
+        {
+          "reason": "Task tests must align to approved hierarchy.",
+          "section": "testing_implications"
+        }
+      ],
       "test_expectations": {
         "cloud_e2e": {
           "evidence_required": [],
@@ -116,5 +155,11 @@
         ]
       }
     }
-  ]
+  ],
+  "technical_spec": {
+    "path": "docs/technical-specs/simulated-local-pipeline.json",
+    "spec_id": "TECH-simulated-local-pipeline",
+    "status": "validated",
+    "validation_path": "docs/validation-reports/simulated-local-pipeline-technical-spec-validation.json"
+  }
 }

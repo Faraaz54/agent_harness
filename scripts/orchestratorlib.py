@@ -52,7 +52,32 @@ def domain_required(config: dict[str,Any], task: dict[str,Any]) -> bool:
     threshold=config.get('domain_review',{}).get('required_when_risk_at_least','medium')
     return RISK_ORDER.get(task.get('risk_level','low'),1) >= RISK_ORDER.get(threshold,2) or bool(config.get('domain_review',{}).get('default_required'))
 
+def _resolve_spec_section(spec: dict[str, Any], section: str) -> Any:
+    current: Any = spec
+    for part in section.replace('/', '.').split('.'):
+        if not part:
+            continue
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        else:
+            return None
+    return current
+
 def task_context(repo: Path, manifest: dict[str,Any], task: dict[str,Any], attempt: int) -> Path:
     run_id=manifest['run_id']; p=context_dir(repo,run_id)/f"{task['task_id']}-attempt-{attempt}.json"
-    obj={'schema_version':'1.0','run_id':run_id,'task_id':task['task_id'],'attempt':attempt,'intent':manifest.get('idsd',{}).get('intent'),'context':manifest.get('idsd',{}).get('context'),'expectations':manifest.get('idsd',{}).get('expectations'),'task':task,'required_output':f"docs/implementation-results/{task['task_id']}-attempt-{attempt}.json"}
+    idsd = manifest.get('idsd',{})
+    context_path = idsd.get('context')
+    context_pack = load_json(repo/context_path) if context_path and (repo/context_path).exists() else {}
+    wanted = set(task.get('required_context', []))
+    available = {f.get('context_id'): f for f in context_pack.get('project_context',{}).get('included_files', [])}
+    selected_context_files = [available[cid] for cid in wanted if cid in available]
+
+    spec_path = idsd.get('technical_spec')
+    technical_spec = load_json(repo/spec_path) if spec_path and (repo/spec_path).exists() else {}
+    selected_spec_sections = []
+    for ref in task.get('technical_spec_refs', []):
+        section = ref.get('section')
+        selected_spec_sections.append({'section': section, 'reason': ref.get('reason'), 'content': _resolve_spec_section(technical_spec, section)})
+
+    obj={'schema_version':'1.0','run_id':run_id,'task_id':task['task_id'],'attempt':attempt,'intent':idsd.get('intent'),'context':context_path,'expectations':idsd.get('expectations'),'technical_spec':spec_path,'technical_spec_validation':idsd.get('technical_spec_validation'),'task':task,'project_context':{'required_context':task.get('required_context',[]),'context_files':task.get('context_files',[]),'selected_context_files':selected_context_files},'technical_spec_context':{'technical_spec_refs':task.get('technical_spec_refs',[]),'selected_spec_sections':selected_spec_sections},'required_output':f"docs/implementation-results/{task['task_id']}-attempt-{attempt}.json"}
     write_json(p,obj); return p

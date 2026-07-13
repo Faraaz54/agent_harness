@@ -1,0 +1,138 @@
+{
+  "architecture": {
+    "entrypoints": [
+      "python -m pipeline.run"
+    ],
+    "runtime_targets": [
+      "local_python"
+    ],
+    "style": "modular local batch pipeline"
+  },
+  "configuration": {
+    "secrets": "none required for local fixture",
+    "source_path": "CLI argument or config object, not hard-coded absolute path"
+  },
+  "data_flow": [
+    {
+      "description": "Read fixture rows from local source files.",
+      "inputs": [
+        "fixture source file"
+      ],
+      "outputs": [
+        "raw parsed rows"
+      ],
+      "stage": "read_fixture"
+    },
+    {
+      "description": "Validate rows and emit accepted/rejected outputs with lineage.",
+      "inputs": [
+        "raw parsed rows"
+      ],
+      "outputs": [
+        "validated output records",
+        "rejection records"
+      ],
+      "stage": "validate_and_write"
+    }
+  ],
+  "deferred_items": [
+    {
+      "item": "Azure/Databricks job submission",
+      "reason": "Reserved for goal-auto or explicit environment authority."
+    }
+  ],
+  "dependencies": {
+    "forbidden_libraries": [
+      {
+        "name": "cloud SDK mutation clients",
+        "reason": "Cloud execution is outside build-auto authority"
+      }
+    ],
+    "package_manager": "pip",
+    "required_libraries": [
+      {
+        "allowed_usage": "test execution only",
+        "name": "pytest",
+        "reason": "Run unit/integration/local E2E tests"
+      }
+    ]
+  },
+  "error_handling": {
+    "fatal_config": "fail loud",
+    "invalid_rows": "write rejection records with reason and lineage"
+  },
+  "implementation_rules": [
+    "Preserve source lineage on accepted and rejected rows.",
+    "Use deterministic idempotency keys for reruns.",
+    "Do not call Azure or Databricks APIs in build-auto."
+  ],
+  "intent_id": "simulated-local-pipeline",
+  "module_design": {
+    "src/pipeline/lineage": "lineage key construction and idempotency helpers",
+    "src/pipeline/run.py": "local pipeline entrypoint",
+    "src/pipeline/sources": "source readers and parsers",
+    "src/pipeline/validation": "row validation and rejection reasons"
+  },
+  "observability": {
+    "logging": "record source path, row counts, rejection counts"
+  },
+  "risks": [
+    {
+      "mitigation": "Project-pack context and future goal loop cloud verification.",
+      "risk": "Fixture divergence from production APIs"
+    }
+  ],
+  "schema_version": "1.0",
+  "source_artifacts": {
+    "context_pack_path": "docs/context/simulated-local-pipeline.json",
+    "expectations_path": "docs/expectations/simulated-local-pipeline.json",
+    "intent_path": "docs/intents/simulated-local-pipeline.md",
+    "omitted_project_context_files": [],
+    "project_context_files": [
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-README",
+        "path": "project-packs/invoice-governance/context/README.md",
+        "used_for": [
+          "expectation_derivation",
+          "technical_specification",
+          "task_decomposition"
+        ]
+      },
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+        "path": "project-packs/invoice-governance/context/ingestion-context.md",
+        "used_for": [
+          "expectation_derivation",
+          "technical_specification",
+          "task_decomposition"
+        ]
+      }
+    ]
+  },
+  "spec_id": "TECH-simulated-local-pipeline",
+  "status": "validated",
+  "technical_decisions": [
+    {
+      "alternatives_considered": [
+        "Databricks job execution"
+      ],
+      "decision": "Use modular local Python pipeline for build-auto proof",
+      "rationale": "Build-auto must prove local behaviour without mutating cloud resources."
+    }
+  ],
+  "testing_implications": {
+    "cloud_e2e": [
+      "deferred to goal-auto"
+    ],
+    "integration": [
+      "fixture read/write boundary"
+    ],
+    "local_e2e": [
+      "fixture source to validated output and rerun count check"
+    ],
+    "unit": [
+      "parser validation",
+      "lineage/idempotency key construction"
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "const": "technical-spec-agent"
+    },
+    "artifacts": {
+      "additionalProperties": false,
+      "properties": {
+        "technical_spec_json": {
+          "type": "string"
+        },
+        "technical_spec_md": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "technical_spec_json",
+        "technical_spec_md"
+      ],
+      "type": "object"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "model_routing": {
+      "type": "object"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "source_artifacts": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "technical_decisions": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "CHANGES_REQUIRED",
+        "BLOCKED_BY_AMBIGUITY",
+        "BLOCKED_BY_MISSING_CONTEXT"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "agent",
+    "intent_id",
+    "verdict",
+    "artifacts",
+    "source_artifacts",
+    "model_routing"
+  ],
+  "title": "Technical Spec Derivation Result",
+  "type": "object"
+}

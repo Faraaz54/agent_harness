@@ -27,7 +27,8 @@ Read:
 - `project-packs/<active-pack>/project-pack.json`;
 - project-pack README;
 - domain-review skill and public references;
-- task contract;
+- task contract, especially `required_context` and `context_files`;
+- assembled Context Pack project-context excerpts relevant to the task;
 - approved Intent/Expectations snippets;
 - implementation result;
 - changed files and tests relevant to the domain;
@@ -89,6 +90,9 @@ Return only this JSON object in the artifact:
   "task_id": "<task-id>",
   "attempt": 1,
   "verdict": "PASS",
+  "context_files_reviewed": [
+    {"context_id": "<context-id>", "path": "<project-pack context path>", "used_for": ["domain_review"]}
+  ],
   "domain_entities_reviewed": [
     "<entity-or-concept-reviewed>"
   ],
@@ -148,3 +152,8 @@ If there are no findings, `findings` must be an empty array. Do not omit require
 ## Model routing
 
 Use the `domain_reasoning` model alias. If the project pack marks a task domain-critical, do not silently fall back to a low-reasoning model. Record the actual model/fallback in `model_routing`.
+
+
+## Technical Spec context
+
+When an action packet includes `technical_spec` or `technical_spec_context`, treat it as binding implementation/review context. Do not implement or approve behaviour that contradicts the referenced Technical Spec sections. If the spec is insufficient or inconsistent with the task contract, return a structured blocking finding rather than inventing hidden design choices.

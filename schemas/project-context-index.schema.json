@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "context_folder": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content_excerpt": {
+            "type": "string"
+          },
+          "context_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "markdown",
+              "json",
+              "yaml",
+              "text"
+            ]
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "phase_availability": {
+            "items": {
+              "enum": [
+                "assemble_context",
+                "derive_expectations",
+                "validate_expectations",
+                "derive_tasks",
+                "validate_tasks",
+                "implementation",
+                "review",
+                "domain_review",
+                "validation",
+                "teach_me"
+              ]
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "sha256": {
+            "minLength": 16,
+            "type": "string"
+          },
+          "size_bytes": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "title": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "context_id",
+          "path",
+          "kind",
+          "title",
+          "sha256",
+          "size_bytes",
+          "phase_availability"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "project_pack": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "selection_strategy": {
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_pack",
+    "context_folder",
+    "files"
+  ],
+  "title": "Project Pack Context Index",
+  "type": "object"
+}

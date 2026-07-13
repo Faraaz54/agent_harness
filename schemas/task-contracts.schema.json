@@ -73,6 +73,36 @@
           "behavior": {
             "type": "string"
           },
+          "context_files": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "context_id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "path": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "used_for": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "context_id",
+                "path",
+                "used_for"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
           "dependencies": {
             "items": {
               "type": "string"
@@ -103,6 +133,13 @@
           "objective": {
             "type": "string"
           },
+          "required_context": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
           "required_reviewers": {
             "items": {
               "type": "string"
@@ -126,6 +163,34 @@
           },
           "task_id": {
             "type": "string"
+          },
+          "technical_spec_refs": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "applies_to": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "section": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "section",
+                "reason"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
           },
           "test_expectations": {
             "additionalProperties": true,
@@ -309,17 +374,47 @@
           "verification",
           "required_reviewers",
           "risk_level",
-          "test_expectations"
+          "test_expectations",
+          "required_context",
+          "context_files",
+          "technical_spec_refs"
         ],
         "type": "object"
       },
       "type": "array"
+    },
+    "technical_spec": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "spec_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "validation_path": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "validation_path",
+        "spec_id"
+      ],
+      "type": "object"
     }
   },
   "required": [
     "schema_version",
     "intent_id",
     "epics",
+    "technical_spec",
     "tasks"
   ],
   "title": "Task Contracts",

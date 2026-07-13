@@ -187,3 +187,8 @@ If there are no findings, `findings` must be an empty array. Do not omit require
 ## Model routing
 
 Use the `review_reasoning` model alias. Prefer a different model/provider from the builder when available. Record fallback in the review result.
+
+
+## Technical Spec context
+
+When an action packet includes `technical_spec` or `technical_spec_context`, treat it as binding implementation/review context. Do not implement or approve behaviour that contradicts the referenced Technical Spec sections. If the spec is insufficient or inconsistent with the task contract, return a structured blocking finding rather than inventing hidden design choices.

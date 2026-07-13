@@ -24,7 +24,7 @@ Read:
 
 - approved manifest;
 - Intent and Expectations excerpts relevant to this task;
-- context packet;
+- context packet, including project-pack context files;
 - task contract;
 - implementation result;
 - postflight result;
@@ -68,6 +68,9 @@ Return only this JSON object in the artifact:
   "task_id": "<task-id>",
   "attempt": 1,
   "verdict": "PASS",
+  "context_coverage": [
+    {"context_id": "<context-id>", "status": "PASS", "evidence": ["task context file was available and used"]}
+  ],
   "artifact_identity_checks": [
     {
       "artifact": "implementation_result",
@@ -142,3 +145,8 @@ Use the `validation_reasoning` model alias. Validation should be independent fro
 ## Testing hierarchy validation
 
 When validating a task, compare the recorded evidence against the required `test_strategy` tier. Reject or block validation when a task that touches persistence, external boundaries, orchestration, or pipeline flow lacks the required integration/local E2E evidence without a documented exception. Cloud E2E evidence is only required when the approved goal/environment contract requires it.
+
+
+## Technical Spec context
+
+When an action packet includes `technical_spec` or `technical_spec_context`, treat it as binding implementation/review context. Do not implement or approve behaviour that contradicts the referenced Technical Spec sections. If the spec is insufficient or inconsistent with the task contract, return a structured blocking finding rather than inventing hidden design choices.

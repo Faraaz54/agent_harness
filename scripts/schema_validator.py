@@ -20,7 +20,13 @@ SCHEMA_BY_KIND={
  'teach-me-report':'schemas/teach-me-report.schema.json',
  'model-routing':'schemas/model-routing.schema.json',
  'run-manifest':'schemas/run-manifest.schema.json',
+ 'context-pack':'schemas/context-pack.schema.json',
+ 'project-context-index':'schemas/project-context-index.schema.json',
+ 'technical-spec':'schemas/technical-spec.schema.json',
+ 'technical-spec-derivation-result':'schemas/technical-spec-derivation-result.schema.json',
+ 'technical-spec-validation-result':'schemas/technical-spec-validation-result.schema.json',
 }
+
 
 def main():
     ap=argparse.ArgumentParser()

@@ -65,3 +65,46 @@ See:
 ## v0.6.2 planning enforcement
 
 Adds schema-enforced expectation derivation/validation, epic-based task decomposition, task-contract validation, and a simulated pipeline planning workflow.
+
+## v0.6.3 project-pack context flow
+
+Project packs may now expose simple reusable project context under:
+
+```text
+project-packs/<project-name>/context/
+```
+
+Run:
+
+```bash
+python -B scripts/project_context.py validate --pack project-packs/<project-name>
+python -B scripts/assemble_context.py --intent docs/intents/<intent-id>.md --output-json docs/context/<intent-id>.json --output-md docs/context/<intent-id>.md
+python -B scripts/schema_validator.py --kind context-pack --path docs/context/<intent-id>.json
+```
+
+Downstream Expectations must cite `source_context`; task contracts must cite `required_context` and `context_files`.
+
+## v0.6.4 Technical Spec stage
+
+Adds a schema-enforced Technical Spec between Expectations and Task Contracts:
+
+```text
+Intent → Context → Expectations → Technical Spec → Epics/Tasks → Build-Auto
+```
+
+New commands:
+
+```text
+/derive-technical-spec
+/validate-technical-spec
+```
+
+New deterministic checks:
+
+```bash
+python -B scripts/schema_validator.py --kind technical-spec --path docs/technical-specs/<intent-id>.json
+python -B scripts/validate_technical_spec.py --spec docs/technical-specs/<intent-id>.json --output docs/validation-reports/<intent-id>-technical-spec-validation.json
+python -B scripts/schema_validator.py --kind technical-spec-validation-result --path docs/validation-reports/<intent-id>-technical-spec-validation.json
+```
+
+Task contracts must now include top-level `technical_spec` and per-task `technical_spec_refs`.

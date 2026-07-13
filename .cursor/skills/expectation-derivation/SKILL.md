@@ -7,6 +7,8 @@ description: Derives done/fail boundary and hierarchical testing expectations fr
 
 Generate Expectations from approved Intent and assembled Context.
 
+Expectations must cite the assembled Context Pack and project-pack context files used to derive the expectations. Use `source_context.context_pack_path` and `source_context.project_context_files[]`.
+
 Expectations must include:
 
 - success scenarios;

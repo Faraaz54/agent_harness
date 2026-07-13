@@ -18,4 +18,4 @@ Also write a human-readable Markdown summary:
 docs/validation-reports/<intent-id>-expectations-validation.md
 ```
 
-Return `PASS` only when the Expectations JSON is schema-valid, has success/failure scenarios, and declares all testing hierarchy tiers.
+Return `PASS` only when the Expectations JSON is schema-valid, references the assembled Context Pack and project-pack context files through `source_context`, has success/failure scenarios, and declares all testing hierarchy tiers.

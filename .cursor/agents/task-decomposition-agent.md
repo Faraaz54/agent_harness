@@ -22,8 +22,9 @@ Use these skills in order:
 
 1. `using-agent-skills`
 2. `epic-task-decomposition`
-3. `test-hierarchy`
-4. active project-pack public domain guidance
+3. `technical-specification`
+4. `test-hierarchy`
+5. active project-pack public domain guidance
 
 ## Requirements
 
@@ -31,6 +32,7 @@ Use these skills in order:
 - Each epic must have `epic_id`, `name`, `goal`, `sequencing_rationale`, and risk level.
 - Each task must be a vertical slice, not an architecture layer.
 - Each task must reference a declared `epic_id`.
+- Each task must include `required_context` and `context_files` selected from `docs/context/<intent-id>.json`. Each task must include `technical_spec_refs` selected from `docs/technical-specs/<intent-id>.json`.
 - Each task must include all four test hierarchy tiers.
 - Each task must declare allowed/forbidden paths when implementation scope is known.
 
@@ -44,4 +46,4 @@ docs/task-decomposition-results/<intent-id>.json
 ```
 
 The task contract must validate against `schemas/task-contracts.schema.json`.
-The decomposition result must validate against `schemas/task-decomposition-result.schema.json`.
+The decomposition result must validate against `schemas/task-decomposition-result.schema.json` and include `context_files_considered` and `technical_spec_considered`.

@@ -16,6 +16,7 @@ python -B scripts/validate_expectations.py --expectations docs/expectations/<int
 
 Review dimensions:
 
+- `source_context` references the assembled Context Pack and relevant project-pack context files;
 - success scenarios are observable;
 - failure scenarios are binary or evaluable;
 - acceptance criteria map to tests;

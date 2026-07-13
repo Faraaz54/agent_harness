@@ -120,6 +120,75 @@
     "schema_version": {
       "type": "string"
     },
+    "source_context": {
+      "additionalProperties": false,
+      "properties": {
+        "context_pack_id": {
+          "type": "string"
+        },
+        "context_pack_path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "omitted_project_context_files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "context_id": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "context_id",
+              "path",
+              "reason"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "project_context_files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "context_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "used_for": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "context_id",
+              "path",
+              "used_for"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "context_pack_path",
+        "project_context_files"
+      ],
+      "type": "object"
+    },
     "source_context_id": {
       "type": "string"
     },
@@ -191,7 +260,8 @@
     "acceptance_criteria",
     "validation_strategy",
     "testing_expectations_matrix",
-    "required_testing_tiers"
+    "required_testing_tiers",
+    "source_context"
   ],
   "title": "IDSD Expectations",
   "type": "object"

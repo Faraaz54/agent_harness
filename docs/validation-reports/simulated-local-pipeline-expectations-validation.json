@@ -3,8 +3,7 @@
   "findings": [],
   "intent_id": "simulated-local-pipeline",
   "model_routing": {
-    "alias": "validation_reasoning",
-    "selected_model": "operator-or-ide-selected"
+    "alias": "validation_reasoning"
   },
   "schema_validation": {
     "errors": [],
@@ -12,28 +11,7 @@
     "status": "PASS"
   },
   "schema_version": "1.0",
-  "semantic_checks": [
-    {
-      "check": "expectations schema",
-      "evidence": "schemas/expectations.schema.json",
-      "status": "PASS"
-    },
-    {
-      "check": "testing expectations matrix declares all tiers",
-      "evidence": "testing_expectations_matrix",
-      "status": "PASS"
-    },
-    {
-      "check": "required_testing_tiers declares all tiers",
-      "evidence": "required_testing_tiers",
-      "status": "PASS"
-    },
-    {
-      "check": "success and failure scenarios present",
-      "evidence": "success_scenarios/failure_scenarios",
-      "status": "PASS"
-    }
-  ],
-  "validated_at": "2026-07-12T11:44:43.807447+00:00",
+  "semantic_checks": [],
+  "validated_at": "2026-07-13T03:01:05.445976+00:00",
   "verdict": "PASS"
 }

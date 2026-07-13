@@ -1,5 +1,16 @@
 {
   "agent": "task-contract-validation-agent",
+  "context_checks": [
+    {
+      "context_file_count": 2,
+      "required_context": [
+        "CTX-INVOICE-GOVERNANCE-README",
+        "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT"
+      ],
+      "status": "PASS",
+      "task_id": "PIPE-001"
+    }
+  ],
   "dependency_checks": [],
   "epic_checks": [
     {
@@ -10,8 +21,7 @@
   "findings": [],
   "intent_id": "simulated-local-pipeline",
   "model_routing": {
-    "alias": "validation_reasoning",
-    "selected_model": "operator-or-ide-selected"
+    "alias": "validation_reasoning"
   },
   "schema_validation": {
     "errors": [],
@@ -19,6 +29,19 @@
     "status": "PASS"
   },
   "schema_version": "1.0",
+  "technical_spec_checks": [
+    {
+      "path": "docs/technical-specs/simulated-local-pipeline.json",
+      "spec_id": "TECH-simulated-local-pipeline",
+      "status": "PASS",
+      "validation_path": "docs/validation-reports/simulated-local-pipeline-technical-spec-validation.json"
+    },
+    {
+      "ref_count": 3,
+      "status": "PASS",
+      "task_id": "PIPE-001"
+    }
+  ],
   "test_expectation_checks": [
     {
       "highest_required_tier": "local_e2e",
@@ -26,6 +49,6 @@
       "task_id": "PIPE-001"
     }
   ],
-  "validated_at": "2026-07-12T11:44:49.194826+00:00",
+  "validated_at": "2026-07-13T03:01:05.455460+00:00",
   "verdict": "PASS"
 }

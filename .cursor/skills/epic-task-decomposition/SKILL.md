@@ -42,6 +42,11 @@ Tasks should deliver vertical behaviour, not architectural layers. Each task mus
 
 ## Required `test_expectations`
 
+Every task contract must reference the project context it depends on. Add:
+
+- `required_context`: list of context IDs from `docs/context/<intent-id>.json` that the task needs;
+- `context_files`: list of objects with `context_id`, `path`, and `used_for`.
+
 Every task contract must state the required evidence for all four tiers:
 
 - `unit`;

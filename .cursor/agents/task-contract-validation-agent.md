@@ -7,7 +7,7 @@ readonly: true
 
 # Task Contract Validation Agent
 
-Use `using-agent-skills`, `epic-task-decomposition`, `test-hierarchy`, and `adversarial-review`.
+Use `using-agent-skills`, `epic-task-decomposition`, `technical-specification`, `test-hierarchy`, and `adversarial-review`.
 
 You validate task contracts before run preparation. You do not implement and you do not edit task contracts.
 
@@ -31,6 +31,9 @@ Use `PASS` only when:
 - top-level epics are present;
 - every task references a declared epic;
 - dependencies reference declared tasks;
+- every task declares `required_context` and `context_files`;
+- top-level `technical_spec` is present and points to the validated Technical Spec;
+- every task declares `technical_spec_refs` with section and reason;
 - all test hierarchy tiers are declared for every task;
 - required tiers include evidence expectations;
 - non-required tiers include reasons.

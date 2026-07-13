@@ -1,1 +1,188 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Context Pack","type":"object","required":["intent_id","runtime","repository","project_pack"],"properties":{"intent_id":{"type":"string"},"runtime":{"type":"object"},"repository":{"type":"object"},"project_pack":{"type":"object"}},"additionalProperties":true}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "type": "object"
+    },
+    "available_tools": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "bootstrap": {
+      "type": "object"
+    },
+    "context_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "intent_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "project_context": {
+      "additionalProperties": false,
+      "properties": {
+        "context_folder": {
+          "type": "string"
+        },
+        "included_files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "available_to_phases": {
+                "items": {
+                  "enum": [
+                    "assemble_context",
+                    "derive_expectations",
+                    "validate_expectations",
+                    "derive_tasks",
+                    "validate_tasks",
+                    "implementation",
+                    "review",
+                    "domain_review",
+                    "validation",
+                    "teach_me"
+                  ]
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "content_excerpt": {
+                "type": "string"
+              },
+              "context_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "markdown",
+                  "json",
+                  "yaml",
+                  "text"
+                ]
+              },
+              "path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "sha256": {
+                "minLength": 16,
+                "type": "string"
+              },
+              "size_bytes": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "title": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "context_id",
+              "path",
+              "kind",
+              "title",
+              "sha256",
+              "size_bytes",
+              "available_to_phases"
+            ],
+            "type": "object"
+          },
+          "minItems": 0,
+          "type": "array"
+        },
+        "phase_availability": {
+          "items": {
+            "enum": [
+              "assemble_context",
+              "derive_expectations",
+              "validate_expectations",
+              "derive_tasks",
+              "validate_tasks",
+              "implementation",
+              "review",
+              "domain_review",
+              "validation",
+              "teach_me"
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "selection_notes": {
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "context_folder",
+        "included_files",
+        "phase_availability",
+        "selection_notes"
+      ],
+      "type": "object"
+    },
+    "project_pack": {
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "validation": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "path"
+      ],
+      "type": "object"
+    },
+    "repository": {
+      "type": "object"
+    },
+    "runtime": {
+      "type": "object"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "testing": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "context_id",
+    "intent_id",
+    "created_at",
+    "runtime",
+    "repository",
+    "project_pack",
+    "project_context"
+  ],
+  "title": "Context Pack",
+  "type": "object"
+}

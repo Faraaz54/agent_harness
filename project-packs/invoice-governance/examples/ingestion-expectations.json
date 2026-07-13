@@ -30,6 +30,29 @@
     }
   },
   "schema_version": "1.0",
+  "source_context": {
+    "context_pack_id": "local-contractor-ingestion-pipeline",
+    "context_pack_path": "docs/context/local-contractor-ingestion-pipeline.json",
+    "omitted_project_context_files": [],
+    "project_context_files": [
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-README",
+        "path": "project-packs/invoice-governance/context/README.md",
+        "used_for": [
+          "project scope and phase availability"
+        ]
+      },
+      {
+        "context_id": "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT",
+        "path": "project-packs/invoice-governance/context/ingestion-context.md",
+        "used_for": [
+          "lineage constraints",
+          "source semantics",
+          "local build-auto boundary"
+        ]
+      }
+    ]
+  },
   "source_context_id": "local-contractor-ingestion-pipeline",
   "success_scenarios": [
     "Valid SAP work-order rows are loaded into bronze and normalized into silver with source lineage.",

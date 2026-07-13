@@ -25,13 +25,25 @@ class HarnessV05Tests(unittest.TestCase):
             subprocess.run(['git','init','-q'],cwd=repo,check=True)
             subprocess.run(['git','config','user.email','t@example.com'],cwd=repo,check=True); subprocess.run(['git','config','user.name','T'],cwd=repo,check=True)
             subprocess.run(['cp','-a',str(ROOT)+ '/.', str(repo)],check=True)
-            (repo/'docs/intents').mkdir(parents=True,exist_ok=True); (repo/'docs/context').mkdir(parents=True,exist_ok=True); (repo/'docs/expectations').mkdir(parents=True,exist_ok=True); (repo/'docs/task-contracts').mkdir(parents=True,exist_ok=True); (repo/'docs/validation-reports').mkdir(parents=True,exist_ok=True)
-            (repo/'docs/intents/x.md').write_text('# Intent: X\n\n## Goal\nG\n\n## Constraints\n- C\n\n## Failure Conditions\n- F\n')
-            (repo/'docs/context/x.json').write_text(json.dumps({'intent_id':'x','runtime':{},'repository':{},'project_pack':{}}))
-            (repo/'docs/expectations/x.json').write_text(json.dumps({'intent_id':'x','success_scenarios':['s'],'failure_scenarios':['f'],'acceptance_criteria':['a']}))
-            (repo/'docs/task-contracts/x.json').write_text(json.dumps({'schema_version':'1.0','intent_id':'x','tasks':[{'task_id':'T-1','objective':'O','behavior':'B','scope':['src/x.py'],'dependencies':[],'acceptance_criteria':['A'],'negative_cases':[],'verification':{'commands':['python -V']},'required_reviewers':['test-agent'],'risk_level':'low','test_expectations': json.loads(TEST_EXPECTATIONS_FIXTURE)}]}))
-            (repo/'docs/validation-reports/x-expectations-validation.md').write_text('PASS')
-            subprocess.run([sys.executable,'-B','scripts/prepare_run.py','--run-id','r1','--intent','docs/intents/x.md','--context','docs/context/x.json','--expectations','docs/expectations/x.json','--tasks','docs/task-contracts/x.json','--expectation-validation','docs/validation-reports/x-expectations-validation.md','--output','tasks/run_manifest.draft.json','--state-output','tasks/run_state.json','--feature-output','tasks/feature_list.json'],cwd=repo,check=True)
+            for d in ['docs/intents','docs/context','docs/expectations','docs/task-contracts','docs/validation-reports','tasks']:
+                (repo/d).mkdir(parents=True,exist_ok=True)
+            (repo/'docs/intents/x.md').write_text('# Intent: X\n\n## Goal\nBuild a tiny local pipeline.\n\n## Constraints\n- Preserve context.\n\n## Failure Conditions\n- Tests fail.\n')
+            subprocess.run([sys.executable,'-B','scripts/assemble_context.py','--intent','docs/intents/x.md','--output-json','docs/context/x.json','--output-md','docs/context/x.md'],cwd=repo,check=True)
+            ctx=json.loads((repo/'docs/context/x.json').read_text())
+            ctx_files=[{'context_id':f['context_id'],'path':f['path'],'used_for':['expectation_derivation','task_decomposition']} for f in ctx['project_context']['included_files']]
+            (repo/'docs/expectations/x.json').write_text(json.dumps({
+                'schema_version':'1.0','intent_id':'x','source_context_id':'x',
+                'source_context':{'context_pack_path':'docs/context/x.json','context_pack_id':'x','project_context_files':ctx_files,'omitted_project_context_files':[]},
+                'success_scenarios':['s'],'failure_scenarios':['f'],'acceptance_criteria':['add works'],
+                'validation_strategy':['unit test'],
+                'testing_expectations_matrix':[{'behavior_or_risk':'add works','unit':'Required','integration':'Not required: no boundary','local_e2e':'Not required: no pipeline','cloud_e2e':'Not required: no authority'}],
+                'required_testing_tiers':{'unit':{'required':True,'reason':'logic'},'integration':{'required':False,'reason':'no boundary'},'local_e2e':{'required':False,'reason':'no pipeline'},'cloud_e2e':{'required':False,'reason':'no authority'}}
+            }))
+            subprocess.run([sys.executable,'-B','scripts/validate_expectations.py','--expectations','docs/expectations/x.json','--output','docs/validation-reports/x-expectations-validation.json'],cwd=repo,check=True)
+            task_context_files=[{'context_id':f['context_id'],'path':f['path'],'used_for':['implementation','review','validation']} for f in ctx['project_context']['included_files']]
+            (repo/'docs/task-contracts/x.json').write_text(json.dumps({'schema_version':'1.0','intent_id':'x','epics':[{'epic_id':'E-1','name':'Foundation','goal':'Build first slice','sequencing_rationale':'Smallest safe slice','risk_level':'low'}],'tasks':[{'task_id':'T-1','epic_id':'E-1','objective':'O','behavior':'B','scope':['src/x.py'],'allowed_paths':['src/**','tests/**'],'forbidden_paths':['docs/intents/**'], 'non_goals':[], 'dependencies':[],'acceptance_criteria':['add works'],'negative_cases':[],'verification':{'commands':['python -V']},'required_reviewers':['test-agent'],'risk_level':'low','required_context':[f['context_id'] for f in ctx['project_context']['included_files']],'context_files':task_context_files,'test_expectations': json.loads(TEST_EXPECTATIONS_FIXTURE)}]}))
+            subprocess.run([sys.executable,'-B','scripts/validate_tasks.py','--tasks','docs/task-contracts/x.json','--output','docs/validation-reports/x-task-contract-validation.json'],cwd=repo,check=True)
+            subprocess.run([sys.executable,'-B','scripts/prepare_run.py','--run-id','r1','--intent','docs/intents/x.md','--context','docs/context/x.json','--expectations','docs/expectations/x.json','--tasks','docs/task-contracts/x.json','--expectation-validation','docs/validation-reports/x-expectations-validation.json','--task-validation','docs/validation-reports/x-task-contract-validation.json','--output','tasks/run_manifest.draft.json','--state-output','tasks/run_state.json','--feature-output','tasks/feature_list.json'],cwd=repo,check=True)
             self.assertTrue((repo/'tasks/run_manifest.draft.json').exists())
             self.assertEqual(load:=json.loads((repo/'tasks/feature_list.json').read_text())['tasks'][0]['status'],'pending')
 

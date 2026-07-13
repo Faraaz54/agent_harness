@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "const": "technical-spec-validation-agent"
+    },
+    "checks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "type": "string"
+    },
+    "model_routing": {
+      "type": "object"
+    },
+    "schema_validation": {
+      "type": "object"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "spec_id": {
+      "type": "string"
+    },
+    "validated_at": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "PASS_WITH_WARNINGS",
+        "CHANGES_REQUIRED",
+        "BLOCKED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "agent",
+    "intent_id",
+    "spec_id",
+    "verdict",
+    "schema_validation",
+    "checks",
+    "findings",
+    "model_routing",
+    "validated_at"
+  ],
+  "title": "Technical Spec Validation Result",
+  "type": "object"
+}

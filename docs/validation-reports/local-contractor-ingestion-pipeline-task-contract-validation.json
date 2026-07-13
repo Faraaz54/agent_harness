@@ -1,0 +1,54 @@
+{
+  "agent": "task-contract-validation-agent",
+  "context_checks": [
+    {
+      "context_file_count": 1,
+      "required_context": [
+        "CTX-INVOICE-GOVERNANCE-INGESTION-CONTEXT"
+      ],
+      "status": "PASS",
+      "task_id": "ING-001"
+    }
+  ],
+  "dependency_checks": [],
+  "epic_checks": [
+    {
+      "epic_id": "INGESTION-EPIC-001",
+      "status": "PASS"
+    }
+  ],
+  "findings": [],
+  "intent_id": "local-contractor-ingestion-pipeline",
+  "model_routing": {
+    "alias": "validation_reasoning",
+    "selected_model": "operator-or-ide-selected"
+  },
+  "schema_validation": {
+    "errors": [],
+    "schema": "schemas/task-contracts.schema.json",
+    "status": "PASS"
+  },
+  "schema_version": "1.0",
+  "technical_spec_checks": [
+    {
+      "path": "project-packs/invoice-governance/examples/ingestion-technical-spec.json",
+      "spec_id": "TECH-local-contractor-ingestion-pipeline",
+      "status": "PASS",
+      "validation_path": "docs/validation-reports/local-contractor-ingestion-pipeline-technical-spec-validation.json"
+    },
+    {
+      "ref_count": 4,
+      "status": "PASS",
+      "task_id": "ING-001"
+    }
+  ],
+  "test_expectation_checks": [
+    {
+      "highest_required_tier": "local_e2e",
+      "status": "PASS",
+      "task_id": "ING-001"
+    }
+  ],
+  "validated_at": "2026-07-13T02:55:22.675732+00:00",
+  "verdict": "PASS"
+}

@@ -31,4 +31,4 @@ Also write a human-readable summary at:
 docs/validation-reports/<intent-id>-expectations-validation.md
 ```
 
-Use `PASS` only when schema validation passes and all semantic checks pass.
+Use `PASS` only when schema validation passes, `source_context` references the assembled Context Pack/project context files, and all semantic checks pass.

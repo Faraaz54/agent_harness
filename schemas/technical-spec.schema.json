@@ -1,0 +1,348 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "architecture": {
+      "additionalProperties": true,
+      "properties": {
+        "entrypoints": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "runtime_targets": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "style": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "style",
+        "runtime_targets",
+        "entrypoints"
+      ],
+      "type": "object"
+    },
+    "configuration": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "data_flow": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "inputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "outputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "stage": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "description",
+          "inputs",
+          "outputs"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "deferred_items": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "item": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "dependencies": {
+      "additionalProperties": true,
+      "properties": {
+        "forbidden_libraries": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "reason"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "package_manager": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "required_libraries": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "allowed_usage": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "version_constraint": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "reason",
+              "allowed_usage"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "package_manager",
+        "required_libraries",
+        "forbidden_libraries"
+      ],
+      "type": "object"
+    },
+    "error_handling": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "implementation_rules": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "intent_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "module_design": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "minProperties": 1,
+      "type": "object"
+    },
+    "observability": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "risks": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "source_artifacts": {
+      "additionalProperties": false,
+      "properties": {
+        "context_pack_path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "expectations_path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "intent_path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "omitted_project_context_files": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "project_context_files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "context_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "used_for": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "context_id",
+              "path",
+              "used_for"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "intent_path",
+        "context_pack_path",
+        "expectations_path",
+        "project_context_files"
+      ],
+      "type": "object"
+    },
+    "spec_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "proposed",
+        "validated",
+        "approved"
+      ]
+    },
+    "technical_decisions": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "alternatives_considered": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "decision": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "rationale": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "testing_implications": {
+      "additionalProperties": false,
+      "properties": {
+        "cloud_e2e": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "integration": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "local_e2e": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "unit": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit",
+        "integration",
+        "local_e2e",
+        "cloud_e2e"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "intent_id",
+    "spec_id",
+    "status",
+    "source_artifacts",
+    "architecture",
+    "dependencies",
+    "module_design",
+    "data_flow",
+    "implementation_rules",
+    "configuration",
+    "testing_implications",
+    "technical_decisions",
+    "deferred_items"
+  ],
+  "title": "Technical Spec",
+  "type": "object"
+}
