@@ -1,6 +1,6 @@
 {
   "context_id": "simulated-local-pipeline",
-  "created_at": "2026-07-13T03:01:03.627297+00:00",
+  "created_at": "2026-07-13T11:43:51.712464+00:00",
   "intent_id": "simulated-local-pipeline",
   "project_context": {
     "context_folder": "project-packs/invoice-governance/context",

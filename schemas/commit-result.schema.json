@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Commit Result",
+  "type": "object",
+  "required": ["verdict", "task_id", "commit_sha", "paths"],
+  "properties": {
+    "verdict": {"enum": ["PASS", "FAIL"]},
+    "task_id": {"type": "string"},
+    "commit_sha": {"type": "string"},
+    "paths": {"type": "array", "items": {"type": "string"}},
+    "error": {"type": "string"}
+  },
+  "additionalProperties": true
+}

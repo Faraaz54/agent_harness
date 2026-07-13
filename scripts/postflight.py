@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, json, subprocess, sys
 sys.dont_write_bytecode=True
-from harnesslib import repository_root, validate_active_preflight, run_gate_group, working_tree_fingerprint, save_preflight_state
+from harnesslib import repository_root, validate_active_preflight, run_gate_group, working_tree_fingerprint, save_preflight_state, write_json
 
 def run_optional(cmd: list[str], repo):
     p=subprocess.run(cmd,cwd=repo,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -21,5 +21,5 @@ def main():
     if report['verdict']!='PASS': verdict='FAIL'
     fp=working_tree_fingerprint(repo)
     result={'task_id':args.task_id,'verdict':verdict,'checks':checks,'report_path':report['report_path'],'working_tree_fingerprint':fp,'stale':False}
-    state['last_postflight']=result; save_preflight_state(repo,state); print(json.dumps(result,indent=2)); return 0 if verdict=='PASS' else 1
+    state['last_postflight']=result; save_preflight_state(repo,state); out=repo/'docs/postflight'/f'{args.task_id}.json'; write_json(out,result); print(json.dumps(result,indent=2)); return 0 if verdict=='PASS' else 1
 if __name__=='__main__': raise SystemExit(main())

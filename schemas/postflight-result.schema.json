@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Postflight Result",
+  "type": "object",
+  "required": ["task_id", "verdict", "checks", "working_tree_fingerprint", "stale"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "verdict": {"enum": ["PASS", "FAIL"]},
+    "checks": {"type": "array"},
+    "report_path": {"type": "string"},
+    "working_tree_fingerprint": {"type": "string"},
+    "stale": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

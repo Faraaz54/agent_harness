@@ -293,7 +293,7 @@
     "require_new_run_branch": true,
     "run_branch_pattern": "agent/{run_id}"
   },
-  "schema_version": "0.6.0",
+  "schema_version": "0.6.5",
   "scope_control": {
     "allow_governance_paths": [
       "tasks/feature_list.json",

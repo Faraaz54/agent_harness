@@ -4,47 +4,27 @@ description: Start or resume an approved run and execute every eligible task thr
 
 # /build-auto
 
-Use the `build-orchestration` skill. The command is intentionally a thin orchestrator client, but it must not be shallow in behaviour: it delegates all state decisions to `scripts/build_orchestrator.py` and all work to the proper specialist agents/commands.
+Use the `build-orchestration` skill. This command is an unattended orchestrator client, but it must still delegate all state decisions to scripts.
 
-## Required startup
+## Non-negotiable startup
 
-1. Read `AGENTS.md`, `harness.config.json`, `docs/bootstrap/environment.md`, `tasks/run_manifest.json`, `tasks/run_state.json`, `tasks/feature_list.json`, and the active project pack summary.
-2. Apply `using-agent-skills` and record selected skills in each result artifact.
-3. Run:
+Do **not** ask the operator to run `python -B scripts/build_orchestrator.py next` manually.
 
-```bash
-python -B scripts/build_orchestrator.py status
-```
-
-4. If status is not terminal, run:
+Start by running:
 
 ```bash
-python -B scripts/build_orchestrator.py next
+python -B scripts/build_auto.py
 ```
 
-## Execute the returned action exactly
+`build_auto.py` calls `build_orchestrator.py next` internally, creates the next action packet, validates it, and prints the exact action plus next steps. Treat that output as authoritative.
 
-Route actions as follows:
+## Auto loop
 
-- `REFRESH_BOOTSTRAP` → `/bootstrap-environment`
-- `RUN_PREFLIGHT` → `/start-run`
-- `IMPLEMENT_TASK` → delegate context packet to `build-agent`
-- `REPAIR_TASK` → delegate repair packet to `build-agent`
-- `RUN_POSTFLIGHT` → `/postflight`
-- `RUN_REVIEW` with `test-agent` → `test-agent`
-- `RUN_REVIEW` with `principal-engineer-agent` → `principal-engineer-agent`
-- `RUN_DOMAIN_REVIEW` → `domain-reviewer-agent`
-- `RUN_VALIDATOR` → `validator-agent`
-- `COMMIT_TASK` → `/commit-task`
-- `FINALIZE_SESSION` → `/finalize-session`
-- `COMPLETE` → report final artifacts and stop
-- `BLOCKED` or `REQUIRES_HUMAN_DECISION` → checkpoint, report exact blocker, and stop
+Repeat this loop:
 
-Do not invent a new action. Do not skip `record-result`.
-
-## Record every result
-
-After an agent or command writes its structured result:
+1. Run `python -B scripts/build_auto.py`.
+2. Execute the returned action exactly.
+3. If the action writes a structured result, record it:
 
 ```bash
 python -B scripts/build_orchestrator.py record-result \
@@ -52,7 +32,26 @@ python -B scripts/build_orchestrator.py record-result \
   --result <RESULT-PATH>
 ```
 
-The conversation is not evidence. Only recorded artifacts are evidence.
+4. Continue until `FINALIZE_SESSION`, `COMPLETE`, `BLOCKED`, `REQUIRES_HUMAN_DECISION`, or a result validation failure.
+
+The operator should not need to call `build_orchestrator.py next` directly during normal `/build-auto` execution.
+
+## Action routing
+
+- `RUN_PREFLIGHT` → `/start-run`; stop if it fails.
+- `IMPLEMENT_TASK` → delegate context packet to `build-agent`.
+- `REPAIR_TASK` → delegate repair/context packet to `build-agent`.
+- `RUN_POSTFLIGHT` → `/postflight`; record `docs/postflight/<task-id>.json`.
+- `RUN_REVIEW` with `test-agent` → `test-agent`.
+- `RUN_REVIEW` with `principal-engineer-agent` → `principal-engineer-agent`.
+- `RUN_DOMAIN_REVIEW` → `domain-reviewer-agent`.
+- `RUN_VALIDATOR` → `validator-agent`.
+- `COMMIT_TASK` → `/commit-task`; record `docs/commit-results/<task-id>.json`.
+- `FINALIZE_SESSION` → `/finalize-session` only if local delivery should be completed now.
+- `COMPLETE` → report final artifacts and stop.
+- `BLOCKED` or `REQUIRES_HUMAN_DECISION` → checkpoint, report exact blocker, and stop.
+
+Do not invent a new action. Do not skip `record-result` for actions that produce a result artifact.
 
 ## Repair policy
 
@@ -88,10 +87,4 @@ Do not push, create PR, merge, deploy, or start `/teach-me` unless explicitly in
 
 ## Model routing
 
-Before starting, inspect `harness.config.json:model_routing`. This command should run under the `orchestration_large` alias. Every action returned by `scripts/build_orchestrator.py next` includes a `model_routing` block. Route the action to the configured alias/model and record any fallback in the result artifact.
-
-Run when needed:
-
-```bash
-python -B scripts/model_router.py action --name <ACTION>
-```
+Before starting, inspect `harness.config.json:model_routing`. This command should run under the `orchestration_large` alias. Every action returned by `scripts/build_auto.py` includes a `model_routing` block. Route the action to the configured alias/model and record any fallback in the result artifact.

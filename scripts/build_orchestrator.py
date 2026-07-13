@@ -42,7 +42,7 @@ def next_action(repo: Path, *, once=False):
     if status=='implemented':
         last=(pf or {}).get('last_postflight') or {}
         if last.get('task_id')!=current or last.get('verdict')!='PASS' or last.get('stale'):
-            return new_action(repo,run_id,'RUN_POSTFLIGHT',current,command=f'python -B scripts/postflight.py --task-id {current}')
+            return new_action(repo,run_id,'RUN_POSTFLIGHT',current,command=f'python -B scripts/postflight.py --task-id {current}',expected_output=f'docs/postflight/{current}.json')
         # reviews
         for reviewer, rv in f.get('reviews',{}).items():
             if rv.get('status') in ['pending','changes_required']:
@@ -56,16 +56,18 @@ def next_action(repo: Path, *, once=False):
             last=(pf or {}).get('last_postflight') or {}
             from harnesslib import working_tree_fingerprint
             if last.get('task_id')!=current or last.get('verdict')!='PASS' or last.get('stale') or last.get('working_tree_fingerprint')!=working_tree_fingerprint(repo):
-                return new_action(repo,run_id,'RUN_POSTFLIGHT',current,command=f'python -B scripts/postflight.py --task-id {current}')
+                return new_action(repo,run_id,'RUN_POSTFLIGHT',current,command=f'python -B scripts/postflight.py --task-id {current}',expected_output=f'docs/postflight/{current}.json')
             return new_action(repo,run_id,'COMMIT_TASK',current,command=f'python -B scripts/commit_task.py --task-id {current}',expected_output=f"docs/commit-results/{current}.json")
     return new_action(repo,run_id,'BLOCKED',current,reason=f'No transition for task status {status}')
 
 SCHEMA_BY_ACTION = {
     'IMPLEMENT_TASK': 'schemas/implementation-result.schema.json',
     'REPAIR_TASK': 'schemas/implementation-result.schema.json',
+    'RUN_POSTFLIGHT': 'schemas/postflight-result.schema.json',
     'RUN_REVIEW': 'schemas/review-result.schema.json',
     'RUN_DOMAIN_REVIEW': 'schemas/domain-review-result.schema.json',
     'RUN_VALIDATOR': 'schemas/task-validation.schema.json',
+    'COMMIT_TASK': 'schemas/commit-result.schema.json',
 }
 
 def schema_for_action(repo: Path, action: dict) -> Path | None:
@@ -104,6 +106,11 @@ def record(repo: Path, action_id: str, result_path: Path):
             if verdict in ['PASS','IMPLEMENTED','IMPLEMENTED_AWAITING_REVIEW']:
                 f['status']='implemented'; f['implementation']['files_changed']=result.get('files_changed', f['implementation'].get('files_changed',[])); f['verification']=result.get('verification', f.get('verification',{}))
             else: f['status']='changes_requested'
+        elif action['action']=='RUN_POSTFLIGHT':
+            # postflight writes its durable state into .git/agent-harness/preflight.json.
+            # Recording it here adds an auditable action receipt without changing task status.
+            if verdict != 'PASS':
+                f['status']='changes_requested'
         elif action['action']=='RUN_REVIEW':
             reviewer=action.get('required_agent','reviewer'); status='passed' if verdict in ['PASS','APPROVE','APPROVED'] else 'changes_required'
             f.setdefault('reviews',{}).setdefault(reviewer,{}) .update({'status':status,'findings':result.get('findings',[])})
